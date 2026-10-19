@@ -16,7 +16,6 @@
 <meta name="theme-color" content="#0a0a0a">
 <link rel="icon" href="images/favicon.png" type="image/png">
 <link rel="preload" as="image" href="images/gym-main.jpg">
-<link rel="preload" as="image" href="images/logo-mark.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap">
@@ -136,7 +135,7 @@
   /* ---------- Hero ---------- */
   .hero {
     position: relative; min-height: 100dvh; display: grid; place-items: center; text-align: center;
-    padding: 110px 0 96px; overflow: hidden; isolation: isolate;
+    padding: 120px 0 80px; overflow: hidden; isolation: isolate;
   }
   .hero-bg { position: absolute; inset: 0; z-index: -2; }
   .hero-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center 45%; opacity: .42; filter: saturate(.55) contrast(1.12); }
@@ -156,9 +155,9 @@
     opacity: 0; transform: translateY(24px);
     animation: fadeUp .9s cubic-bezier(.16, 1, .3, 1) .1s forwards;
   }
-  .hero-logo {
-    width: clamp(130px, 16vw, 160px); height: auto; margin-bottom: -8px;
-    filter: drop-shadow(0 8px 30px rgba(0, 0, 0, .6));
+  .section-logo {
+    display: block; width: clamp(160px, 20vw, 240px); height: auto; margin: 0 auto clamp(40px, 5vw, 64px);
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, .6));
   }
   .hero .eyebrow {
     font-family: var(--display); font-size: clamp(14px, 1.6vw, 18px); letter-spacing: .32em; color: var(--red-soft);
@@ -428,7 +427,6 @@
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero-bg" aria-hidden="true"><img src="images/gym-main.jpg" alt="" fetchpriority="high"></div>
     <div class="wrap hero-inner">
-      <img class="hero-logo" src="images/logo-mark.png" alt="정글짐 사자 로고" width="640" height="498">
       <p class="eyebrow">KING OF THE JUNGLE</p>
       <h1 id="hero-title"><span class="line"><span class="word-in">JUNGLE</span></span><span class="line line-gym"><span class="word-in">GYM</span></span></h1>
       <p class="tag">프리미엄 호텔식 헬스장</p>
@@ -442,6 +440,7 @@
 
   <section id="programs" aria-label="프로그램">
     <div class="wrap">
+      <img class="section-logo rv" src="images/logo-mark.png" alt="정글짐 사자 로고" width="640" height="498" loading="lazy">
       <div class="tracks">
         <article class="track rv">
           <div class="track-body">
