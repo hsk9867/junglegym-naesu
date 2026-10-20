@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>정글짐 관리자 · PT 사진 등록</title>
+<link rel="icon" href="images/favicon.png" type="image/png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root { color-scheme: dark; --bg:#0a0a0a; --surface:#151515; --surface-2:#202020; --red:#e3202c; --text:#f5f3f0; --muted:#b3aeae; --dim:#7d7777; --line:rgba(245,243,240,.14); --ok:#2ecc71; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif; font-size:15px; line-height:1.6; }
+  .wrap { width:min(960px, 100% - 32px); margin:0 auto; padding:40px 0 120px; }
+  h1 { font-size:24px; margin:0; display:flex; gap:12px; align-items:center; }
+  h1 img { width:36px; height:28px; object-fit:contain; }
+  h2 { font-size:17px; margin:0 0 12px; }
+  p { margin:0; }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:20px; margin-top:16px; }
+  .muted { color:var(--muted); font-size:14px; }
+  .dim { color:var(--dim); font-size:13px; }
+  label { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
+  input[type=text], input[type=password] { width:100%; height:42px; padding:0 12px; border-radius:8px; border:1px solid var(--line); background:var(--surface-2); color:var(--text); font:inherit; }
+  input[type=file] { color:var(--muted); font-size:13px; }
+  .btn { height:40px; padding:0 16px; border-radius:8px; border:0; background:var(--red); color:#fff; font:inherit; font-weight:700; cursor:pointer; }
+  .btn:disabled { opacity:.45; cursor:not-allowed; }
+  .btn-dark { background:var(--surface-2); color:var(--text); border:1px solid var(--line); }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .slot { display:grid; grid-template-columns: 260px 1fr; gap:18px; align-items:start; }
+  .thumb { aspect-ratio:16/9; border-radius:8px; background:#111 url("images/logo-mark.png") center/36% no-repeat; border:1px solid var(--line); overflow:hidden; display:grid; place-items:center; color:var(--dim); font-size:12px; letter-spacing:.2em; }
+  .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .slot .fields { display:grid; gap:10px; }
+  .status { margin-top:6px; font-size:13px; min-height:1.4em; }
+  .status.ok { color:var(--ok); } .status.err { color:#ff6b6b; }
+  .log { margin-top:16px; max-height:180px; overflow:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; padding:12px; font-family:ui-monospace,Consolas,monospace; font-size:12px; color:var(--muted); white-space:pre-wrap; }
+  .tag { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; border:1px solid var(--line); color:var(--muted); vertical-align:middle; margin-left:6px; }
+  details summary { cursor:pointer; color:var(--muted); font-size:14px; }
+  ol { padding-left:20px; color:var(--muted); font-size:14px; }
+  a { color:var(--text); }
+  @media (max-width:700px) { .slot { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><img src="images/logo-mark.png" alt="">정글짐 관리자 <span class="tag">PT 페이지 사진</span></h1>
+  <p class="muted" style="margin-top:8px">여기서 올린 사진은 GitHub 저장소(hsk9867/junglegym-naesu)에 바로 커밋되고, 약 1분 뒤 <a href="pt.html" target="_blank" rel="noopener">pt.html</a>에 반영됩니다.</p>
+
+  <section class="card" id="auth">
+    <h2>1. GitHub 토큰</h2>
+    <label for="token">Personal Access Token (이 브라우저에만 저장됩니다)</label>
+    <div class="row">
+      <input type="password" id="token" placeholder="github_pat_… 또는 ghp_…" style="flex:1;min-width:240px" autocomplete="off">
+      <button class="btn" id="saveToken">저장하고 불러오기</button>
+      <button class="btn btn-dark" id="clearToken">토큰 지우기</button>
+    </div>
+    <p class="status" id="authStatus"></p>
+    <details style="margin-top:10px">
+      <summary>토큰 만드는 방법</summary>
+      <ol>
+        <li>GitHub 로그인 → 우측 상단 프로필 → <b>Settings</b> → 왼쪽 맨 아래 <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b></li>
+        <li>Repository access: <b>Only select repositories</b> → <b>junglegym-naesu</b> 선택</li>
+        <li>Permissions → Repository permissions → <b>Contents: Read and write</b> 만 켜기</li>
+        <li>Generate 후 표시되는 토큰을 복사해 위 칸에 붙여넣기 (다시 볼 수 없으니 바로 붙여넣기)</li>
+      </ol>
+    </details>
+  </section>
+
+  <section class="card" id="slotsCard" hidden>
+    <h2>2. 사진 자리</h2>
+    <p class="dim">JPG/PNG/HEIC(아이폰은 설정에서 '호환성 우선' 권장). 올리면 가로 1800px 이하 JPG로 자동 압축됩니다. 가로 사진(16:9에 가까운 것)이 가장 잘 맞습니다.</p>
+    <div id="slots"></div>
+  </section>
+
+  <div class="log" id="log" hidden></div>
+</div>
+
+<script>
+(function () {
+  var OWNER = 'hsk9867', REPO = 'junglegym-naesu', BRANCH = 'main';
+  var API = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/';
+  var SITE = 'https://' + OWNER + '.github.io/' + REPO + '/';
+  var SLOTS = [
+    { id: 'hero',  title: '대표 사진 (페이지 맨 위 배경)', hint: '넓은 가로 사진. 수업 장면이나 센터 전경' },
+    { id: 'step1', title: 'STEP.01 상담', hint: '트레이너와 상담하는 모습' },
+    { id: 'step2', title: 'STEP.02 분석', hint: '인바디 측정, 체형 평가' },
+    { id: 'step3', title: 'STEP.03 컨디셔닝', hint: '스트레칭, 가동성 케어' },
+    { id: 'step4', title: 'STEP.04 트레이닝', hint: '1:1 수업 장면' },
+    { id: 'step5', title: 'STEP.05 개인운동', hint: '혼자 운동하는 모습, 머신 존' }
+  ];
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var tokenEl = $('#token'), authStatus = $('#authStatus'), logEl = $('#log'), slotsEl = $('#slots');
+  var token = '', data = null, dataSha = null;
+
+  function log(m) { logEl.hidden = false; logEl.textContent += (new Date()).toLocaleTimeString() + '  ' + m + '\n'; logEl.scrollTop = logEl.scrollHeight; }
+  function setStatus(el, msg, cls) { el.textContent = msg || ''; el.className = 'status' + (cls ? ' ' + cls : ''); }
+  function gh(path, opt) {
+    opt = opt || {};
+    opt.headers = Object.assign({ 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }, opt.headers || {});
+    return fetch(API + path + (opt.method ? '' : '?ref=' + BRANCH + '&t=' + Date.now()), opt).then(function (r) {
+      if (r.status === 404 && !opt.method) return null;
+      if (!r.ok) return r.json().catch(function () { return {}; }).then(function (j) { throw new Error(r.status + ' ' + (j.message || r.statusText)); });
+      return r.json();
+    });
+  }
+  function b64utf8(str) { return btoa(unescape(encodeURIComponent(str))); }
+  function utf8b64(b64) { return decodeURIComponent(escape(atob(b64.replace(/\n/g, '')))); }
+
+  function loadData() {
+    setStatus(authStatus, '불러오는 중…');
+    return gh('data/pt.json').then(function (f) {
+      if (!f) { data = { updated: '', hero: { src: '', alt: '' }, steps: [] }; dataSha = null; }
+      else { data = JSON.parse(utf8b64(f.content)); dataSha = f.sha; }
+      setStatus(authStatus, '연결됨. 사진 자리를 불러왔습니다.', 'ok');
+      $('#slotsCard').hidden = false;
+      renderSlots();
+    }).catch(function (e) {
+      setStatus(authStatus, '실패: ' + e.message + ' (토큰 권한이나 만료를 확인하세요)', 'err');
+      log('load error: ' + e.message);
+    });
+  }
+  function getItem(id) {
+    if (id === 'hero') { data.hero = data.hero || { src: '', alt: '' }; return data.hero; }
+    var s = (data.steps || []).filter(function (x) { return x.id === id; })[0];
+    if (!s) { s = { id: id, src: '', alt: '' }; data.steps = data.steps || []; data.steps.push(s); }
+    return s;
+  }
+  function renderSlots() {
+    slotsEl.innerHTML = '';
+    SLOTS.forEach(function (sl) {
+      var item = getItem(sl.id);
+      var box = document.createElement('div');
+      box.className = 'card slot';
+      box.innerHTML =
+        '<div class="thumb">' + (item.src ? '<img src="' + SITE + item.src + '?v=' + encodeURIComponent(data.updated || Date.now()) + '" alt="">' : 'EMPTY') + '</div>' +
+        '<div class="fields">' +
+          '<div><b>' + sl.title + '</b><div class="dim">' + sl.hint + (item.src ? ' · 현재: ' + item.src : '') + '</div></div>' +
+          '<div><label>사진 설명 (화면 낭독용, 선택)</label><input type="text" class="alt" value="' + (item.alt || '').replace(/"/g, '&quot;') + '" placeholder="예: 트레이너와 상담하는 모습"></div>' +
+          '<div class="row"><input type="file" class="file" accept="image/*"><button class="btn up">업로드</button>' + (item.src ? '<button class="btn btn-dark rm">사진 빼기</button>' : '') + '</div>' +
+          '<p class="status"></p>' +
+        '</div>';
+      var fileEl = $('.file', box), altEl = $('.alt', box), st = $('.status', box), up = $('.up', box), rm = $('.rm', box);
+      up.addEventListener('click', function () {
+        var f = fileEl.files && fileEl.files[0];
+        if (!f) { setStatus(st, '먼저 사진 파일을 선택하세요.', 'err'); return; }
+        up.disabled = true; setStatus(st, '압축 중…');
+        compress(f, sl.id === 'hero' ? 2000 : 1800).then(function (b64) {
+          setStatus(st, '업로드 중… (' + Math.round(b64.length * 0.75 / 1024) + 'KB)');
+          var path = 'images/pt/' + sl.id + '.jpg';
+          return putFile(path, b64, sl.title + ' 사진 등록').then(function () {
+            item.src = path; item.alt = altEl.value.trim();
+            return saveData(sl.title + ' 사진 등록');
+          });
+        }).then(function () {
+          setStatus(st, '완료. 약 1분 뒤 pt.html에 반영됩니다.', 'ok'); log(sl.id + ' uploaded'); renderSlots();
+        }).catch(function (e) { setStatus(st, '실패: ' + e.message, 'err'); log(sl.id + ' error: ' + e.message); up.disabled = false; });
+      });
+      altEl.addEventListener('change', function () {
+        if (!item.src) return;
+        item.alt = altEl.value.trim();
+        saveData(sl.title + ' 설명 수정').then(function () { setStatus(st, '설명 저장됨', 'ok'); }).catch(function (e) { setStatus(st, '실패: ' + e.message, 'err'); });
+      });
+      if (rm) rm.addEventListener('click', function () {
+        if (!confirm(sl.title + ' 사진을 페이지에서 뺄까요? (파일은 저장소에 남고, 자리는 PHOTO COMING SOON 으로 돌아갑니다)')) return;
+        rm.disabled = true; item.src = '';
+        saveData(sl.title + ' 사진 해제').then(function () { log(sl.id + ' cleared'); renderSlots(); }).catch(function (e) { setStatus(st, '실패: ' + e.message, 'err'); rm.disabled = false; });
+      });
+      slotsEl.appendChild(box);
+    });
+  }
+  function compress(file, maxSide) {
+    return new Promise(function (res, rej) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var w = img.naturalWidth, h = img.naturalHeight, s = Math.min(1, maxSide / Math.max(w, h));
+        var c = document.createElement('canvas'); c.width = Math.round(w * s); c.height = Math.round(h * s);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        res(c.toDataURL('image/jpeg', 0.84).split(',')[1]);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); rej(new Error('이미지를 읽을 수 없습니다. JPG나 PNG로 변환해 다시 시도하세요.')); };
+      img.src = url;
+    });
+  }
+  function putFile(path, b64, message) {
+    return gh(path).then(function (existing) {
+      var body = { message: '[admin] ' + message, content: b64, branch: BRANCH };
+      if (existing && existing.sha) body.sha = existing.sha;
+      return gh(path, { method: 'PUT', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
+    });
+  }
+  function saveData(message) {
+    data.updated = new Date().toISOString();
+    var body = { message: '[admin] ' + message, content: b64utf8(JSON.stringify(data, null, 2) + '\n'), branch: BRANCH };
+    if (dataSha) body.sha = dataSha;
+    return gh('data/pt.json', { method: 'PUT', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } })
+      .then(function (r) { dataSha = r.content.sha; });
+  }
+
+  $('#saveToken').addEventListener('click', function () {
+    token = tokenEl.value.trim();
+    if (!token) { setStatus(authStatus, '토큰을 입력하세요.', 'err'); return; }
+    try { localStorage.setItem('jg_admin_token', token); } catch (e) {}
+    loadData();
+  });
+  $('#clearToken').addEventListener('click', function () {
+    token = ''; tokenEl.value = ''; try { localStorage.removeItem('jg_admin_token'); } catch (e) {}
+    $('#slotsCard').hidden = true; setStatus(authStatus, '토큰을 지웠습니다.');
+  });
+  try { var saved = localStorage.getItem('jg_admin_token'); if (saved) { token = saved; tokenEl.value = saved; loadData(); } } catch (e) {}
+})();
+</script>
+</body>
+</html>
