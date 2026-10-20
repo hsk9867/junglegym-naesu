@@ -138,7 +138,16 @@
     padding: 120px 0 80px; overflow: hidden; isolation: isolate;
   }
   .hero-bg { position: absolute; inset: 0; z-index: -2; }
-  .hero-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center 45%; opacity: .42; filter: saturate(.55) contrast(1.12); }
+  .hero-bg img, .hero-bg video { width: 100%; height: 100%; object-fit: cover; object-position: center 45%; opacity: .42; filter: saturate(.55) contrast(1.12); }
+  .hero-bg video { position: absolute; inset: 0; opacity: 0; filter: saturate(.8) contrast(1.06); transition: opacity 1.2s ease; }
+  .hero-bg video.playing { opacity: .72; }
+  .hero-bg.video-on img { opacity: 0; transition: opacity 1.2s ease; }
+  .hero-bg.video-on::after {
+    background:
+      radial-gradient(60% 55% at 50% 42%, rgba(180, 20, 34, .34) 0%, rgba(110, 12, 22, .22) 40%, rgba(10, 10, 10, 0) 75%),
+      linear-gradient(to bottom, rgba(10, 10, 10, .6) 0%, rgba(10, 10, 10, .22) 35%, rgba(10, 10, 10, .92) 100%),
+      linear-gradient(115deg, rgba(130, 14, 26, .32), rgba(28, 6, 9, .42) 50%, rgba(6, 6, 6, .85));
+  }
   .hero-bg::after {
     content: ""; position: absolute; inset: 0;
     background:
@@ -425,7 +434,12 @@
 <main id="top">
 
   <section class="hero" aria-labelledby="hero-title">
-    <div class="hero-bg" aria-hidden="true"><img src="images/gym-main.jpg" alt="" fetchpriority="high"></div>
+    <div class="hero-bg" aria-hidden="true">
+      <img src="images/gym-main.jpg" alt="" fetchpriority="high">
+      <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="images/gym-main.jpg">
+        <source src="video/intro.mp4" type="video/mp4">
+      </video>
+    </div>
     <div class="wrap hero-inner">
       <p class="eyebrow">KING OF THE JUNGLE</p>
       <h1 id="hero-title"><span class="line"><span class="word-in">JUNGLE</span></span><span class="line line-gym"><span class="word-in">GYM</span></span></h1>
@@ -742,6 +756,16 @@
         });
       });
     });
+
+    var hv = document.querySelector('.hero-video');
+    if (hv) {
+      var noMotion = matchMedia('(prefers-reduced-motion: reduce)').matches || location.search.indexOf('static') > -1;
+      if (noMotion) { hv.removeAttribute('autoplay'); hv.pause(); hv.parentNode.removeChild(hv); }
+      else {
+        hv.addEventListener('playing', function () { hv.classList.add('playing'); hv.parentNode.classList.add('video-on'); }, { once: true });
+        var p = hv.play(); if (p && p.catch) p.catch(function () {});
+      }
+    }
 
     var els = document.querySelectorAll('.rv');
     if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches || location.search.indexOf('static') > -1) {
