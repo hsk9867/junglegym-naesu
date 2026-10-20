@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="css/style.css">
+<script>try{if(sessionStorage.getItem("jg_intro_seen"))document.documentElement.classList.add("intro-skip");else document.documentElement.classList.add("intro-open");}catch(e){document.documentElement.classList.add("intro-open");}</script>
 </head>
 <body>
 
@@ -59,13 +60,13 @@
 
 <main id="top">
 
-  <section class="intro" id="intro" aria-label="정글짐 인트로 영상">
-    <div class="intro-fixed">
+  <section class="intro" id="intro" aria-label="정글짐 인트로 영상" tabindex="-1">
+    <div class="intro-stage">
       <video class="intro-video" autoplay muted loop playsinline preload="auto" poster="images/gym-main.jpg">
         <source src="video/intro.mp4" type="video/mp4">
       </video>
       <div class="intro-shade" aria-hidden="true"></div>
-      <div class="intro-cue" aria-hidden="true">SCROLL<span class="arrow"></span></div>
+      <button class="intro-cue" type="button" id="introEnter">ENTER<small>화면을 클릭하면 시작합니다</small></button>
     </div>
   </section>
 

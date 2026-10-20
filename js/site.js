@@ -27,29 +27,31 @@
     });
   });
 
-  // 인트로 영상(고정) : 첫 화면에서 재생, 스크롤하면 메인 화면이 위로 올라와 덮고 영상은 페이드·정지
-  var introSec = document.getElementById('intro'), introFixed = introSec && introSec.querySelector('.intro-fixed'), iv = introSec && introSec.querySelector('.intro-video');
-  var heroSec = document.querySelector('.hero');
-  if (introSec && introFixed && iv) {
-    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) { iv.removeAttribute('autoplay'); iv.pause(); }
-    else { var ip = iv.play(); if (ip && ip.catch) ip.catch(function () {}); }
-    var hasViewTimeline = window.CSS && CSS.supports && CSS.supports('animation-timeline: view()');
-    function introScroll() {
-      var r = introSec.getBoundingClientRect(), h = r.height || window.innerHeight;
-      var p = Math.min(1, Math.max(0, -r.top / h)); // 0: 영상 전체 보임, 1: 메인 화면이 완전히 덮음
-      if (!hasViewTimeline && !reduce) { introFixed.style.opacity = String(1 - p); introFixed.style.transform = 'scale(' + (1 - p * 0.1) + ')'; }
-      if (p >= 0.35 && heroSec) heroSec.classList.add('in');
-      if (p >= 1) { introFixed.classList.add('off'); if (!iv.paused) iv.pause(); }
-      else { introFixed.classList.remove('off'); if (iv.paused && !reduce) { var p3 = iv.play(); if (p3 && p3.catch) p3.catch(function () {}); } }
+  // 인트로 영상 오버레이: 재생 중 화면을 클릭(탭)하면 사라지고 메인 페이지. 휠·스와이프·키보드로도 닫힘
+  var intro = document.getElementById('intro');
+  if (intro && !document.documentElement.classList.contains('intro-skip')) {
+    var ivid = intro.querySelector('.intro-video'), istage = intro.querySelector('.intro-stage');
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, closed = false, touchY = null;
+    if (ivid && ivid.play) { var ipl = ivid.play(); if (ipl && ipl.catch) ipl.catch(function () {}); }
+    function closeIntro() {
+      if (closed) return; closed = true;
+      intro.classList.add('leaving');
+      document.documentElement.classList.remove('intro-open');
+      document.documentElement.classList.add('intro-done');
+      try { sessionStorage.setItem('jg_intro_seen', '1'); } catch (e) {}
+      var done = function () { if (ivid && ivid.pause) ivid.pause(); if (intro.parentNode) intro.parentNode.removeChild(intro); };
+      istage.addEventListener('transitionend', done, { once: true });
+      setTimeout(done, reduce ? 400 : 1000);
     }
-    window.addEventListener('scroll', introScroll, { passive: true });
-    window.addEventListener('resize', introScroll);
-    introScroll();
-  }
-  if (heroSec) {
-    if (!('IntersectionObserver' in window)) heroSec.classList.add('in');
-    else new IntersectionObserver(function (es, obs) { es.forEach(function (e) { if (e.isIntersecting) { heroSec.classList.add('in'); obs.disconnect(); } }); }, { threshold: 0.35 }).observe(heroSec);
+    intro.addEventListener('click', closeIntro);
+    intro.addEventListener('wheel', function (e) { e.preventDefault(); if (Math.abs(e.deltaY) > 10) closeIntro(); }, { passive: false });
+    intro.addEventListener('touchstart', function (e) { touchY = e.touches[0].clientY; }, { passive: true });
+    intro.addEventListener('touchmove', function (e) { e.preventDefault(); if (touchY !== null && Math.abs(e.touches[0].clientY - touchY) > 40) closeIntro(); }, { passive: false });
+    document.addEventListener('keydown', function (e) {
+      if (closed) return;
+      if (['ArrowDown', 'PageDown', ' ', 'Enter', 'Escape', 'ArrowUp'].indexOf(e.key) > -1) { e.preventDefault(); closeIntro(); }
+    });
+    intro.focus({ preventScroll: true });
   }
 
   var els = document.querySelectorAll('.rv');
