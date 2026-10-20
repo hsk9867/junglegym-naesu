@@ -27,29 +27,29 @@
     });
   });
 
-  // 히어로 배경 영상: 재생되면 포스터 → 영상으로 전환, 화면 밖이면 정지, 스크롤 페이드 폴백
-  var hv = document.querySelector('.hero-video');
-  if (hv) {
-    var hbg = hv.parentNode, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) { hv.removeAttribute('autoplay'); hv.pause(); }
-    else {
-      hv.addEventListener('playing', function () { hv.classList.add('playing'); hbg.classList.add('video-on'); }, { once: true });
-      var hp = hv.play(); if (hp && hp.catch) hp.catch(function () {});
-      if ('IntersectionObserver' in window) {
-        new IntersectionObserver(function (es) {
-          es.forEach(function (e) { if (e.isIntersecting) { var p2 = hv.play(); if (p2 && p2.catch) p2.catch(function () {}); } else { hv.pause(); } });
-        }, { threshold: 0.05 }).observe(hv);
-      }
-      if (!(window.CSS && CSS.supports && CSS.supports('animation-timeline: view()'))) {
-        var hero = hbg.parentNode;
-        var fadeBg = function () {
-          var h = hero.offsetHeight || window.innerHeight, top = hero.getBoundingClientRect().top;
-          var p = Math.min(1, Math.max(0, -top / (h * 0.75)));
-          hbg.style.opacity = String(1 - p); hbg.style.transform = 'translateY(' + (-p * 12) + '%)';
-        };
-        window.addEventListener('scroll', fadeBg, { passive: true }); fadeBg();
-      }
+  // 인트로 영상(고정) : 첫 화면에서 재생, 스크롤하면 메인 화면이 위로 올라와 덮고 영상은 페이드·정지
+  var introSec = document.getElementById('intro'), introFixed = introSec && introSec.querySelector('.intro-fixed'), iv = introSec && introSec.querySelector('.intro-video');
+  var heroSec = document.querySelector('.hero');
+  if (introSec && introFixed && iv) {
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { iv.removeAttribute('autoplay'); iv.pause(); }
+    else { var ip = iv.play(); if (ip && ip.catch) ip.catch(function () {}); }
+    var hasViewTimeline = window.CSS && CSS.supports && CSS.supports('animation-timeline: view()');
+    function introScroll() {
+      var r = introSec.getBoundingClientRect(), h = r.height || window.innerHeight;
+      var p = Math.min(1, Math.max(0, -r.top / h)); // 0: 영상 전체 보임, 1: 메인 화면이 완전히 덮음
+      if (!hasViewTimeline && !reduce) { introFixed.style.opacity = String(1 - p); introFixed.style.transform = 'scale(' + (1 - p * 0.1) + ')'; }
+      if (p >= 0.35 && heroSec) heroSec.classList.add('in');
+      if (p >= 1) { introFixed.classList.add('off'); if (!iv.paused) iv.pause(); }
+      else { introFixed.classList.remove('off'); if (iv.paused && !reduce) { var p3 = iv.play(); if (p3 && p3.catch) p3.catch(function () {}); } }
     }
+    window.addEventListener('scroll', introScroll, { passive: true });
+    window.addEventListener('resize', introScroll);
+    introScroll();
+  }
+  if (heroSec) {
+    if (!('IntersectionObserver' in window)) heroSec.classList.add('in');
+    else new IntersectionObserver(function (es, obs) { es.forEach(function (e) { if (e.isIntersecting) { heroSec.classList.add('in'); obs.disconnect(); } }); }, { threshold: 0.35 }).observe(heroSec);
   }
 
   var els = document.querySelectorAll('.rv');

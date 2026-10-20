@@ -59,13 +59,18 @@
 
 <main id="top">
 
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="hero-bg" aria-hidden="true">
-      <img src="images/gym-main.jpg" alt="" fetchpriority="high">
-      <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="images/gym-main.jpg">
+  <section class="intro" id="intro" aria-label="정글짐 인트로 영상">
+    <div class="intro-fixed">
+      <video class="intro-video" autoplay muted loop playsinline preload="auto" poster="images/gym-main.jpg">
         <source src="video/intro.mp4" type="video/mp4">
       </video>
+      <div class="intro-shade" aria-hidden="true"></div>
+      <div class="intro-cue" aria-hidden="true">SCROLL<span class="arrow"></span></div>
     </div>
+  </section>
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true"><img src="images/gym-main.jpg" alt="" fetchpriority="high"></div>
     <div class="wrap hero-inner">
       <p class="eyebrow">KING OF THE JUNGLE</p>
       <h1 id="hero-title"><span class="line"><span class="word-in">JUNGLE</span></span><span class="line line-gym"><span class="word-in">GYM</span></span></h1>
