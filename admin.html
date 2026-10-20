@@ -43,6 +43,70 @@
   ol { padding-left:20px; color:var(--muted); font-size:14px; }
   a { color:var(--text); }
   .gate { max-width:560px; }
+  /* ---- 통계 대시보드 ---- */
+  :root { --blue:#4f8cff; --good:#2ecc71; --bad:#ff6b6b; --gray-mark:#8a8585; }
+  .live { display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); }
+  .live i { width:8px; height:8px; border-radius:50%; background:var(--good); box-shadow:0 0 0 3px rgba(46,204,113,.2); }
+  .live b { color:var(--text); }
+  .rangebar input[type=date] { height:38px; border:1px solid var(--line); border-radius:8px; padding:0 10px; background:var(--surface-2); color:var(--text); font:inherit; font-size:13px; }
+  .seg { display:inline-flex; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:3px; gap:2px; }
+  .seg button { height:32px; padding:0 12px; border-radius:8px; border:0; background:none; color:var(--muted); font:inherit; font-weight:700; font-size:13px; cursor:pointer; }
+  .seg button.on { background:var(--red); color:#fff; }
+  .kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:12px; }
+  .kpi .l { font-size:12.5px; color:var(--muted); font-weight:600; }
+  .kpi .v { font-size:30px; font-weight:800; letter-spacing:-.03em; line-height:1.1; margin-top:8px; font-variant-numeric:tabular-nums; }
+  .kpi .d { margin-top:8px; font-size:12px; color:var(--dim); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .kpi .d b { font-weight:700; padding:1px 6px; border-radius:6px; }
+  .kpi .d b.up { color:var(--good); background:rgba(46,204,113,.15); }
+  .kpi .d b.down { color:var(--bad); background:rgba(255,107,107,.15); }
+  .kpi .d b.flat { color:var(--muted); background:var(--surface-2); }
+  .grid { display:grid; gap:12px; align-items:start; margin-top:12px; }
+  .grid.c2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .grid.c4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .grid .card { margin-top:0; }
+  .card .ch { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:12px; }
+  .card .ch h3 { font-size:14.5px; margin:0; }
+  .card .ch small { color:var(--dim); font-size:12px; }
+  table.t { width:100%; border-collapse:collapse; font-size:13px; }
+  table.t th { text-align:left; font-weight:600; color:var(--dim); font-size:11.5px; letter-spacing:.02em; padding:0 8px 8px 0; border-bottom:1px solid var(--line); white-space:nowrap; }
+  table.t td { padding:8px 8px 8px 0; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.t tr:last-child td { border-bottom:0; }
+  table.t .r { text-align:right; }
+  table.t td.r { font-variant-numeric:tabular-nums; color:var(--muted); white-space:nowrap; }
+  table.t td.k { max-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  table.t .bar { display:block; height:5px; border-radius:0 3px 3px 0; background:var(--red); margin-top:5px; min-width:2px; opacity:.85; }
+  .empty { color:var(--dim); font-size:13px; padding:6px 0; }
+  .chart { position:relative; width:100%; }
+  .chart svg { display:block; width:100%; height:auto; overflow:visible; }
+  .chart .ax { fill:var(--dim); font-size:11px; }
+  .chart .grid { stroke:var(--line); stroke-width:1; }
+  .chart .base { stroke:rgba(245,243,240,.3); stroke-width:1; }
+  .chart .ln { fill:none; stroke-width:2; stroke-linejoin:round; stroke-linecap:round; }
+  .chart .ln.uv { stroke:var(--red); }
+  .chart .ln.pv { stroke:var(--gray-mark); }
+  .chart .ar { fill:var(--red); opacity:.1; }
+  .chart .dot { fill:var(--red); stroke:var(--surface); stroke-width:2; r:0; transition:r .1s; }
+  .chart .dot.pv { fill:var(--gray-mark); }
+  .chart .dot.show { r:4.5; }
+  .chart .xh { stroke:rgba(245,243,240,.3); stroke-width:1; stroke-dasharray:3 3; opacity:0; }
+  .chart .xh.show { opacity:1; }
+  .chart .col { fill:var(--red); rx:3; }
+  .chart .col.dim { opacity:.35; }
+  .chart .hit { fill:transparent; }
+  .chart .tip { position:absolute; transform:translate(-50%,-110%); background:#000; color:#fff; font-size:12px; line-height:1.5; padding:6px 10px; border-radius:8px; pointer-events:none; opacity:0; white-space:nowrap; border:1px solid var(--line); }
+  .chart .tip.show { opacity:1; }
+  .legend { display:flex; gap:16px; font-size:12px; color:var(--muted); margin-bottom:8px; flex-wrap:wrap; }
+  .legend span { display:inline-flex; align-items:center; gap:6px; }
+  .legend i { width:14px; height:2px; background:var(--red); display:inline-block; border-radius:2px; }
+  .legend i.pv { background:var(--gray-mark); }
+  .recent .rrow { display:grid; grid-template-columns:64px 1fr auto; gap:10px; align-items:center; padding:8px 0; border-bottom:1px solid var(--line); font-size:13px; }
+  .recent .rrow:last-child { border-bottom:0; }
+  .recent .when { color:var(--dim); font-size:12px; font-variant-numeric:tabular-nums; }
+  .recent .what { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .recent .what small { color:var(--dim); }
+  .recent .meta { color:var(--dim); font-size:12px; white-space:nowrap; }
+  @media (max-width:1000px) { .kpis, .grid.c4 { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (max-width:640px) { .kpis, .grid.c2, .grid.c4 { grid-template-columns:1fr; } .recent .rrow { grid-template-columns:56px 1fr; } .recent .meta { display:none; } }
   form.row { margin:0; }
   @media (max-width:700px) { .slot { grid-template-columns:1fr; } .two { grid-template-columns:1fr; } }
 </style>
@@ -143,6 +207,24 @@
       <p class="dim">JPG/PNG. 올리면 가로 1800px 이하 JPG로 자동 압축됩니다. 가로 사진(16:9에 가까운 것)이 가장 잘 맞습니다. 문구만 바꿀 때는 "문구 저장"을 누르세요.</p>
     </section>
     <div id="slots"></div>
+  </div>
+
+  <div id="dash" hidden>
+    <section class="card">
+      <div class="row" style="justify-content:space-between;align-items:flex-start">
+        <div><h2 style="margin:0">방문자 통계</h2><p class="dim" id="dashRangeText">최근 7일</p></div>
+        <span class="live"><i></i>지금 접속 <b id="liveN">0</b>명</span>
+      </div>
+      <div class="row rangebar" style="margin-top:14px">
+        <div class="seg" id="rangeSeg"><button type="button" data-days="1">오늘</button><button type="button" data-days="7" class="on">7일</button><button type="button" data-days="30">30일</button><button type="button" data-days="90">90일</button></div>
+        <input type="date" id="fromD"><span class="dim">~</span><input type="date" id="toD">
+        <button class="btn btn-dark" type="button" id="applyRange">적용</button>
+        <button class="btn btn-dark" type="button" id="refreshBtn" title="새로고침">↻</button>
+        <button class="btn btn-dark" type="button" id="exportBtn" title="엑셀(CSV)로 내려받기">CSV</button>
+      </div>
+      <p class="dim" style="margin-top:10px">개인정보는 저장하지 않습니다. 방문자는 브라우저에 저장되는 무작위 익명 ID로 구분하고, 이 관리자 페이지에 로그인한 브라우저의 방문은 집계하지 않습니다. 검색엔진·카카오톡 미리보기 같은 봇은 제외됩니다.</p>
+    </section>
+    <div id="dashBody"><div class="card dim">불러오는 중…</div></div>
   </div>
 
   <div class="log" id="log" hidden></div>
@@ -406,13 +488,17 @@
   function b64utf8(str) { return btoa(unescape(encodeURIComponent(str))); }
   function utf8b64(b64) { return decodeURIComponent(escape(atob(b64.replace(/\n/g, '')))); }
 
+  var view = 'pages';
   function renderTabs() {
     tabsEl.innerHTML = '';
     PAGES.forEach(function (p) {
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'tab' + (p === page ? ' on' : ''); b.textContent = p.name;
-      b.addEventListener('click', function () { page = p; renderTabs(); loadData(); });
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'tab' + (view === 'pages' && p === page ? ' on' : ''); b.textContent = p.name;
+      b.addEventListener('click', function () { view = 'pages'; page = p; show('dash', false); show('pages', true); renderTabs(); loadData(); });
       tabsEl.appendChild(b);
     });
+    var d = document.createElement('button'); d.type = 'button'; d.className = 'tab' + (view === 'dash' ? ' on' : ''); d.textContent = '방문자 통계';
+    d.addEventListener('click', function () { view = 'dash'; show('pages', false); show('dash', true); renderTabs(); loadDash(); });
+    tabsEl.appendChild(d);
   }
   function loadData() {
     setStatus(authStatus, page.name + ' 불러오는 중…');
@@ -421,6 +507,7 @@
       if (!f) { data = { updated: '', hero: { src: '', alt: '' } }; data[page.list] = []; dataSha = null; }
       else { data = JSON.parse(utf8b64(f.content)); dataSha = f.sha; }
       setStatus(authStatus, '연결됨. ' + page.name + ' 자리를 불러왔습니다.', 'ok');
+      if (view === 'dash') return;
       $('#pages').hidden = false;
       $('#pageTitle').textContent = '2. ' + page.name + ' 사진 자리';
       $('#pageHint').innerHTML = page.hint + ' <a href="' + page.link + '" target="_blank" rel="noopener">페이지 열기</a>';
@@ -542,6 +629,177 @@
     if (dataSha) body.sha = dataSha;
     return gh(page.file, { method: 'PUT', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } })
       .then(function (r) { dataSha = r.content.sha; });
+  }
+
+  /* ---------- 방문자 통계 대시보드 ---------- */
+  var STATS = 'https://junglegym-stats.hsk9867.workers.dev';
+  var fmt = function (n) { return Number(n || 0).toLocaleString('ko-KR'); };
+  var $$ = function (sel, r) { return Array.prototype.slice.call((r || document).querySelectorAll(sel)); };
+  function kstToday(off) { var d = new Date(Date.now() + 9 * 3600e3 + (off || 0) * 86400e3); return d.toISOString().slice(0, 10); }
+  var range = { from: kstToday(-6), to: kstToday() };
+  $('#rangeSeg').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var d = Number(b.getAttribute('data-days'));
+    range = { from: kstToday(-(d - 1)), to: kstToday() };
+    $$('#rangeSeg button').forEach(function (x) { x.classList.toggle('on', x === b); });
+    loadDash();
+  });
+  $('#applyRange').addEventListener('click', function () {
+    var f = $('#fromD').value, t = $('#toD').value;
+    if (!f || !t) return;
+    range = { from: f < t ? f : t, to: f < t ? t : f };
+    $$('#rangeSeg button').forEach(function (x) { x.classList.remove('on'); });
+    loadDash();
+  });
+  $('#refreshBtn').addEventListener('click', loadDash);
+  $('#exportBtn').addEventListener('click', function () {
+    if (!token) return;
+    fetch(STATS + '/export?from=' + range.from + '&to=' + range.to, { headers: { Authorization: 'Bearer ' + token } })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); })
+      .then(function (b) { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'junglegym-visits-' + range.from + '_' + range.to + '.csv'; document.body.appendChild(a); a.click(); a.remove(); })
+      .catch(function (e) { log('export error: ' + e.message); });
+  });
+  function loadDash() {
+    var body = $('#dashBody');
+    if (!token) { body.innerHTML = '<div class="card dim">GitHub 토큰을 먼저 저장하면 통계를 볼 수 있습니다.</div>'; return; }
+    body.innerHTML = '<div class="card dim">불러오는 중…</div>';
+    fetch(STATS + '/stats?from=' + range.from + '&to=' + range.to, { headers: { Authorization: 'Bearer ' + token } })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || r.status); return j; }); })
+      .then(function (d) {
+        $('#fromD').value = d.range.from; $('#toD').value = d.range.to;
+        $('#liveN').textContent = fmt(d.live);
+        $('#dashRangeText').textContent = (d.range.from === d.range.to ? d.range.from + ' (오늘)' : d.range.from + ' ~ ' + d.range.to + ' · ' + d.range.days + '일') + ' · 이전 같은 기간과 비교';
+        renderDash(d);
+      })
+      .catch(function (e) { body.innerHTML = '<div class="card"><p class="status err">통계를 불러오지 못했습니다: ' + esc(e.message) + (String(e.message).indexOf('unauthorized') >= 0 ? ' (토큰에 저장소 쓰기 권한이 있어야 합니다)' : '') + '</p></div>'; });
+  }
+  function delta(cur, prev) {
+    if (!prev) return '<b class="flat">—</b><span>이전 ' + fmt(prev) + '</span>';
+    var p = Math.round(((cur - prev) / prev) * 100), cls = p > 0 ? 'up' : p < 0 ? 'down' : 'flat';
+    return '<b class="' + cls + '">' + (p > 0 ? '▲' : p < 0 ? '▼' : '') + ' ' + Math.abs(p) + '%</b><span>이전 ' + fmt(prev) + '</span>';
+  }
+  function tableHtml(cols, rows, opts) {
+    opts = opts || {};
+    if (!rows.length) return '<div class="empty">아직 데이터가 없습니다.</div>';
+    var max = opts.bar ? Math.max.apply(null, rows.map(function (r) { return Number(r[opts.bar]) || 0; }).concat([1])) : 0;
+    return '<table class="t"><thead><tr>' + cols.map(function (c) { return '<th' + (c.r ? ' class="r"' : '') + '>' + esc(c.h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      rows.map(function (r) {
+        return '<tr>' + cols.map(function (c) {
+          var v = c.f ? c.f(r) : r[c.k];
+          if (c.r) return '<td class="r">' + fmt(v) + '</td>';
+          var bar = opts.bar && c.k === opts.barOn ? '<span class="bar" style="width:' + Math.max(2, (Number(r[opts.bar]) || 0) / max * 100) + '%"></span>' : '';
+          return '<td class="k" title="' + esc(v) + '">' + esc(v) + bar + '</td>';
+        }).join('') + '</tr>';
+      }).join('') + '</tbody></table>';
+  }
+  var EVENT_NAMES = { tel: '전화 걸기', naver_talk: '네이버 톡톡 상담', kakao: '카카오톡', instagram: '인스타그램 이동', naver_map: '네이버 지도·플레이스', naver_review: '네이버 리뷰 보기', pt_page: 'PT 둘러보기 클릭', center_page: '센터 둘러보기 클릭', price_page: '이용권 안내 클릭' };
+  var PAGE_NAMES = { '/': '메인', '/pt': 'PT 안내', '/center': '센터 둘러보기', '/price': '이용권 안내', '/hours': '운영시간', '/faq': '자주 묻는 질문' };
+  var pageName = function (p) { return PAGE_NAMES[p] ? PAGE_NAMES[p] + ' (' + p + ')' : p; };
+  function renderDash(d) {
+    var t = d.totals, p = d.prev, single = d.range.from === d.range.to;
+    var conv = t.visits ? Math.round((t.eventUsers / t.visits) * 100) : 0;
+    $('#dashBody').innerHTML =
+      '<div class="kpis">' +
+        '<div class="card kpi"><div class="l">방문</div><div class="v">' + fmt(t.visits) + '</div><div class="d">' + delta(t.visits, p.visits) + '</div></div>' +
+        '<div class="card kpi"><div class="l">순방문자</div><div class="v">' + fmt(t.uv) + '</div><div class="d">' + delta(t.uv, p.uv) + '<span>· 신규 ' + fmt(t.newUsers || 0) + ' · 재방문 ' + fmt(Math.max(0, t.uv - (t.newUsers || 0))) + '</span></div></div>' +
+        '<div class="card kpi"><div class="l">페이지뷰</div><div class="v">' + fmt(t.pv) + '</div><div class="d">' + delta(t.pv, p.pv) + '</div></div>' +
+        '<div class="card kpi"><div class="l">문의 액션 <span class="dim" style="font-weight:500">(전화·톡톡·지도)</span></div><div class="v">' + fmt(t.events) + '</div><div class="d">' + delta(t.events, p.events) + '<span>· 방문 대비 ' + conv + '%</span></div></div>' +
+      '</div>' +
+      '<div class="grid c2" style="grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)">' +
+        '<div class="card"><div class="ch"><h3>' + (single ? '시간대별 방문' : '일별 추이') + '</h3><small>' + (single ? '한국시간 기준' : '방문자 · 페이지뷰') + '</small></div><div id="trendBox"></div></div>' +
+        '<div class="card"><div class="ch"><h3>유입경로</h3><small>방문자 기준</small></div><div id="srcBox"></div></div>' +
+      '</div>' +
+      '<div class="grid c2">' +
+        '<div class="card"><div class="ch"><h3>유입 상세 (어느 페이지에서 왔나)</h3><small>상위 30</small></div><div id="refBox"></div></div>' +
+        '<div class="card"><div class="ch"><h3>문의 액션</h3><small>클릭 수 · 사람 수</small></div><div id="evBox"></div></div>' +
+      '</div>' +
+      '<div class="grid c2">' +
+        '<div class="card"><div class="ch"><h3>많이 본 페이지</h3></div><div id="pageBox"></div></div>' +
+        '<div class="card"><div class="ch"><h3>첫 방문 페이지</h3><small>방문당 처음 연 페이지</small></div><div id="landBox"></div></div>' +
+      '</div>' +
+      '<div class="grid c4">' +
+        '<div class="card"><div class="ch"><h3>기기</h3></div><div id="devBox"></div></div>' +
+        '<div class="card"><div class="ch"><h3>브라우저</h3></div><div id="brBox"></div></div>' +
+        '<div class="card"><div class="ch"><h3>운영체제</h3></div><div id="osBox"></div></div>' +
+        '<div class="card"><div class="ch"><h3>지역</h3><small>도시</small></div><div id="geoBox"></div></div>' +
+      '</div>' +
+      '<div class="grid c2">' +
+        '<div class="card"><div class="ch"><h3>캠페인 (UTM)</h3><small>링크에 ?utm_source=… 를 붙이면 여기에 잡힙니다</small></div><div id="campBox"></div></div>' +
+        '<div class="card"><div class="ch"><h3>최근 활동</h3><small>최근 40건</small></div><div id="recentBox"></div></div>' +
+      '</div>';
+    if (single) renderHourly($('#trendBox'), d.hourly); else renderTrend($('#trendBox'), d.daily, d.range);
+    $('#srcBox').innerHTML = tableHtml([{ h: '경로', k: 'source' }, { h: '방문자', k: 'uv', r: 1 }, { h: '페이지뷰', k: 'pv', r: 1 }], d.sources, { bar: 'uv', barOn: 'source' });
+    $('#refBox').innerHTML = tableHtml([{ h: '참조 주소', k: 'ref_url', f: function (r) { return r.ref_url.replace(/^https?:\/\//, ''); } }, { h: '방문자', k: 'uv', r: 1 }, { h: '뷰', k: 'pv', r: 1 }], d.referrers);
+    $('#evBox').innerHTML = tableHtml([{ h: '액션', k: 'name', f: function (r) { return EVENT_NAMES[r.name] || r.name; } }, { h: '클릭', k: 'c', r: 1 }, { h: '사람', k: 'u', r: 1 }], d.events, { bar: 'c', barOn: 'name' });
+    $('#pageBox').innerHTML = tableHtml([{ h: '페이지', k: 'path', f: function (r) { return pageName(r.path); } }, { h: '뷰', k: 'pv', r: 1 }, { h: '방문자', k: 'uv', r: 1 }], d.pages, { bar: 'pv', barOn: 'path' });
+    $('#landBox').innerHTML = tableHtml([{ h: '페이지', k: 'path', f: function (r) { return pageName(r.path); } }, { h: '방문', k: 'c', r: 1 }], d.landing, { bar: 'c', barOn: 'path' });
+    var dim = function (k) { return (d.dims[k] || []).slice(0, 8); };
+    $('#devBox').innerHTML = tableHtml([{ h: '기기', k: 'k' }, { h: '방문자', k: 'uv', r: 1 }], dim('device'), { bar: 'uv', barOn: 'k' });
+    $('#brBox').innerHTML = tableHtml([{ h: '브라우저', k: 'k' }, { h: '방문자', k: 'uv', r: 1 }], dim('browser'), { bar: 'uv', barOn: 'k' });
+    $('#osBox').innerHTML = tableHtml([{ h: 'OS', k: 'k' }, { h: '방문자', k: 'uv', r: 1 }], dim('os'), { bar: 'uv', barOn: 'k' });
+    var geo = (d.dims.city || []).length ? dim('city') : dim('country');
+    $('#geoBox').innerHTML = tableHtml([{ h: '지역', k: 'k' }, { h: '방문자', k: 'uv', r: 1 }], geo, { bar: 'uv', barOn: 'k' });
+    $('#campBox').innerHTML = tableHtml([{ h: '캠페인', k: 'campaign', f: function (r) { return r.campaign || '(없음)'; } }, { h: '소스', k: 'source' }, { h: '매체', k: 'medium', f: function (r) { return r.medium || '-'; } }, { h: '방문자', k: 'uv', r: 1 }], d.campaigns);
+    $('#recentBox').innerHTML = d.recent.length ? '<div class="recent">' + d.recent.map(function (r) {
+      var when = new Date(r.ts * 1000).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+      var what = r.type === 'event' ? '<b style="color:var(--red)">' + esc(EVENT_NAMES[r.name] || r.name) + '</b> <small>' + esc(pageName(r.path)) + '</small>' : esc(pageName(r.path)) + ' <small>← ' + esc(r.source) + (r.ref_host ? ' · ' + esc(r.ref_host) : '') + '</small>';
+      return '<div class="rrow"><span class="when">' + esc(when) + '</span><span class="what">' + what + '</span><span class="meta">' + esc(r.device) + ' · ' + esc(r.browser) + (r.city ? ' · ' + esc(r.city) : r.country ? ' · ' + esc(r.country) : '') + '</span></div>';
+    }).join('') + '</div>' : '<div class="empty">아직 방문 기록이 없습니다.</div>';
+  }
+  function niceMax(n) { var p = Math.pow(10, Math.floor(Math.log10(Math.max(1, n)))), m = n / p; var k = m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10; return k * p; }
+  function renderTrend(box, rows, rg) {
+    var days = [];
+    for (var dd = new Date(rg.from + 'T00:00:00Z'); dd.toISOString().slice(0, 10) <= rg.to; dd.setUTCDate(dd.getUTCDate() + 1)) days.push(dd.toISOString().slice(0, 10));
+    var byDay = {}; rows.forEach(function (r) { byDay[r.day] = r; });
+    var data = days.map(function (day) { var r = byDay[day] || {}; return { day: day, uv: Number(r.uv || 0), pv: Number(r.pv || 0), ev: Number(r.ev || 0) }; });
+    var W = 640, H = 220, L = 36, R = 10, T = 12, B = 28, iw = W - L - R, ih = H - T - B;
+    var nice = niceMax(Math.max.apply(null, [1].concat(data.map(function (r) { return r.pv; }))));
+    var x = function (i) { return L + (data.length === 1 ? iw / 2 : (i / (data.length - 1)) * iw); };
+    var y = function (v) { return T + ih - (v / nice) * ih; };
+    var line = function (k) { return data.map(function (r, i) { return (i ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(r[k]).toFixed(1); }).join(''); };
+    var area = line('uv') + 'L' + x(data.length - 1).toFixed(1) + ',' + y(0) + 'L' + x(0).toFixed(1) + ',' + y(0) + 'Z';
+    var step = Math.ceil(data.length / 8);
+    var lbl = function (s0) { var p = s0.split('-'); return Number(p[1]) + '/' + Number(p[2]); };
+    box.innerHTML = '<div class="legend"><span><i></i>방문자</span><span><i class="pv"></i>페이지뷰</span></div><div class="chart"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="일별 방문자와 페이지뷰 추이">' +
+      [0, nice / 2, nice].map(function (v) { return '<line class="' + (v ? 'grid' : 'base') + '" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '"/><text class="ax" x="' + (L - 6) + '" y="' + (y(v) + 4) + '" text-anchor="end">' + fmt(v) + '</text>'; }).join('') +
+      data.map(function (r, i) { return (i % step === 0 || i === data.length - 1) ? '<text class="ax" x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle">' + lbl(r.day) + '</text>' : ''; }).join('') +
+      '<path class="ar" d="' + area + '"/><path class="ln pv" d="' + line('pv') + '"/><path class="ln uv" d="' + line('uv') + '"/>' +
+      '<line class="xh" y1="' + T + '" y2="' + (T + ih) + '" x1="0" x2="0"/>' +
+      data.map(function (r, i) { return '<circle class="dot pv" data-i="' + i + '" cx="' + x(i) + '" cy="' + y(r.pv) + '"/><circle class="dot" data-i="' + i + '" cx="' + x(i) + '" cy="' + y(r.uv) + '"/>'; }).join('') +
+      data.map(function (r, i) { var w = data.length === 1 ? iw : iw / (data.length - 1); return '<rect class="hit" data-i="' + i + '" x="' + (x(i) - w / 2) + '" y="' + T + '" width="' + w + '" height="' + ih + '"/>'; }).join('') +
+      '</svg><div class="tip"></div></div>';
+    var svg = $('svg', box), tip = $('.tip', box), xh = $('.xh', box);
+    svg.addEventListener('mousemove', function (e) {
+      var hit = e.target.closest('.hit'); if (!hit) return;
+      var i = Number(hit.getAttribute('data-i')), r = data[i], rect = svg.getBoundingClientRect();
+      $$('.dot', svg).forEach(function (c) { c.classList.toggle('show', Number(c.getAttribute('data-i')) === i); });
+      xh.setAttribute('x1', x(i)); xh.setAttribute('x2', x(i)); xh.classList.add('show');
+      tip.innerHTML = '<b>' + r.day + '</b><br>방문자 ' + fmt(r.uv) + ' · 페이지뷰 ' + fmt(r.pv) + (r.ev ? '<br>문의 액션 ' + fmt(r.ev) : '');
+      tip.style.left = (x(i) / W * rect.width) + 'px'; tip.style.top = (y(r.uv) / H * rect.height) + 'px'; tip.classList.add('show');
+    });
+    svg.addEventListener('mouseleave', function () { tip.classList.remove('show'); xh.classList.remove('show'); $$('.dot', svg).forEach(function (c) { c.classList.remove('show'); }); });
+  }
+  function renderHourly(box, rows) {
+    var by = {}; rows.forEach(function (r) { by[r.hour] = r; });
+    var data = []; for (var h = 0; h < 24; h++) { var r0 = by[h] || {}; data.push({ h: h, uv: Number(r0.uv || 0), pv: Number(r0.pv || 0) }); }
+    var W = 640, H = 220, L = 36, R = 10, T = 12, B = 28, iw = W - L - R, ih = H - T - B;
+    var nice = niceMax(Math.max.apply(null, [1].concat(data.map(function (r) { return r.uv; }))));
+    var bw = iw / 24, gap = 2, y = function (v) { return T + ih - (v / nice) * ih; };
+    box.innerHTML = '<div class="legend"><span><i></i>방문자</span></div><div class="chart"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="시간대별 방문자">' +
+      [0, nice / 2, nice].map(function (v) { return '<line class="' + (v ? 'grid' : 'base') + '" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '"/><text class="ax" x="' + (L - 6) + '" y="' + (y(v) + 4) + '" text-anchor="end">' + fmt(v) + '</text>'; }).join('') +
+      data.map(function (r) { return (r.h % 3 === 0) ? '<text class="ax" x="' + (L + r.h * bw + bw / 2) + '" y="' + (H - 8) + '" text-anchor="middle">' + r.h + '시</text>' : ''; }).join('') +
+      data.map(function (r) { return '<rect class="col" data-h="' + r.h + '" x="' + (L + r.h * bw + gap / 2) + '" y="' + (r.uv ? y(r.uv) : y(0) - 1) + '" width="' + (bw - gap) + '" height="' + (r.uv ? y(0) - y(r.uv) : 1) + '"' + (r.uv ? '' : ' opacity=".25"') + '/>'; }).join('') +
+      data.map(function (r) { return '<rect class="hit" data-h="' + r.h + '" x="' + (L + r.h * bw) + '" y="' + T + '" width="' + bw + '" height="' + ih + '"/>'; }).join('') +
+      '</svg><div class="tip"></div></div>';
+    var svg = $('svg', box), tip = $('.tip', box);
+    svg.addEventListener('mousemove', function (e) {
+      var hit = e.target.closest('.hit'); if (!hit) return;
+      var h = Number(hit.getAttribute('data-h')), r = data[h], rect = svg.getBoundingClientRect();
+      $$('.col', svg).forEach(function (c) { c.classList.toggle('dim', Number(c.getAttribute('data-h')) !== h); });
+      tip.innerHTML = '<b>' + h + '시 ~ ' + (h + 1) + '시</b><br>방문자 ' + fmt(r.uv) + ' · 페이지뷰 ' + fmt(r.pv);
+      tip.style.left = ((L + h * bw + bw / 2) / W * rect.width) + 'px'; tip.style.top = (y(r.uv) / H * rect.height) + 'px'; tip.classList.add('show');
+    });
+    svg.addEventListener('mouseleave', function () { tip.classList.remove('show'); $$('.col', svg).forEach(function (c) { c.classList.remove('dim'); }); });
   }
 
   $('#saveToken').addEventListener('click', function () {

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/wrangler/config-schema.json",
+  "name": "junglegym-stats",
+  "main": "worker.js",
+  "compatibility_date": "2025-09-01",
+  "observability": { "enabled": true },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "junglegym-stats", "database_id": "c0bdc3a1-23cd-43ab-b186-d2479d5729b8", "migrations_dir": "migrations" }
+  ]
+}
