@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>정글짐 관리자 · PT 사진 등록</title>
+<title>정글짐 관리자 · 사진 등록</title>
 <link rel="icon" href="images/favicon.png" type="image/png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -21,15 +21,19 @@
   .dim { color:var(--dim); font-size:13px; }
   label { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
   input[type=text], input[type=password] { width:100%; height:42px; padding:0 12px; border-radius:8px; border:1px solid var(--line); background:var(--surface-2); color:var(--text); font:inherit; }
-  input[type=file] { color:var(--muted); font-size:13px; }
+  input[type=file] { color:var(--muted); font-size:13px; max-width:100%; }
   .btn { height:40px; padding:0 16px; border-radius:8px; border:0; background:var(--red); color:#fff; font:inherit; font-weight:700; cursor:pointer; }
   .btn:disabled { opacity:.45; cursor:not-allowed; }
   .btn-dark { background:var(--surface-2); color:var(--text); border:1px solid var(--line); }
   .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .tabs { display:flex; gap:8px; margin-top:24px; flex-wrap:wrap; }
+  .tab { height:42px; padding:0 18px; border-radius:999px; border:1px solid var(--line); background:none; color:var(--muted); font:inherit; font-weight:700; cursor:pointer; }
+  .tab.on { background:var(--red); border-color:var(--red); color:#fff; }
   .slot { display:grid; grid-template-columns: 260px 1fr; gap:18px; align-items:start; }
   .thumb { aspect-ratio:16/9; border-radius:8px; background:#111 url("images/logo-mark.png") center/36% no-repeat; border:1px solid var(--line); overflow:hidden; display:grid; place-items:center; color:var(--dim); font-size:12px; letter-spacing:.2em; }
   .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-  .slot .fields { display:grid; gap:10px; }
+  .fields { display:grid; gap:10px; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .status { margin-top:6px; font-size:13px; min-height:1.4em; }
   .status.ok { color:var(--ok); } .status.err { color:#ff6b6b; }
   .log { margin-top:16px; max-height:180px; overflow:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; padding:12px; font-family:ui-monospace,Consolas,monospace; font-size:12px; color:var(--muted); white-space:pre-wrap; }
@@ -37,13 +41,13 @@
   details summary { cursor:pointer; color:var(--muted); font-size:14px; }
   ol { padding-left:20px; color:var(--muted); font-size:14px; }
   a { color:var(--text); }
-  @media (max-width:700px) { .slot { grid-template-columns:1fr; } }
+  @media (max-width:700px) { .slot { grid-template-columns:1fr; } .two { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1><img src="images/logo-mark.png" alt="">정글짐 관리자 <span class="tag">PT 페이지 사진</span></h1>
-  <p class="muted" style="margin-top:8px">여기서 올린 사진은 GitHub 저장소(hsk9867/junglegym-naesu)에 바로 커밋되고, 약 1분 뒤 <a href="pt.html" target="_blank" rel="noopener">pt.html</a>에 반영됩니다.</p>
+  <h1><img src="images/logo-mark.png" alt="">정글짐 관리자 <span class="tag">사진 · 문구</span></h1>
+  <p class="muted" style="margin-top:8px">여기서 올린 사진과 문구는 GitHub 저장소(hsk9867/junglegym-naesu)에 바로 커밋되고, 약 1분 뒤 홈페이지에 반영됩니다.</p>
 
   <section class="card" id="auth">
     <h2>1. GitHub 토큰</h2>
@@ -65,11 +69,15 @@
     </details>
   </section>
 
-  <section class="card" id="slotsCard" hidden>
-    <h2>2. 사진 자리</h2>
-    <p class="dim">JPG/PNG/HEIC(아이폰은 설정에서 '호환성 우선' 권장). 올리면 가로 1800px 이하 JPG로 자동 압축됩니다. 가로 사진(16:9에 가까운 것)이 가장 잘 맞습니다.</p>
+  <div id="pages" hidden>
+    <div class="tabs" id="tabs"></div>
+    <section class="card">
+      <h2 id="pageTitle">2. 사진 자리</h2>
+      <p class="dim" id="pageHint"></p>
+      <p class="dim">JPG/PNG. 올리면 가로 1800px 이하 JPG로 자동 압축됩니다. 가로 사진(16:9에 가까운 것)이 가장 잘 맞습니다. 문구만 바꿀 때는 "문구 저장"을 누르세요.</p>
+    </section>
     <div id="slots"></div>
-  </section>
+  </div>
 
   <div class="log" id="log" hidden></div>
 </div>
@@ -79,20 +87,36 @@
   var OWNER = 'hsk9867', REPO = 'junglegym-naesu', BRANCH = 'main';
   var API = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/';
   var SITE = 'https://' + OWNER + '.github.io/' + REPO + '/';
-  var SLOTS = [
-    { id: 'hero',  title: '대표 사진 (페이지 맨 위 배경)', hint: '넓은 가로 사진. 수업 장면이나 센터 전경' },
-    { id: 'step1', title: 'STEP.01 상담', hint: '트레이너와 상담하는 모습' },
-    { id: 'step2', title: 'STEP.02 분석', hint: '인바디 측정, 체형 평가' },
-    { id: 'step3', title: 'STEP.03 컨디셔닝', hint: '스트레칭, 가동성 케어' },
-    { id: 'step4', title: 'STEP.04 트레이닝', hint: '1:1 수업 장면' },
-    { id: 'step5', title: 'STEP.05 개인운동', hint: '혼자 운동하는 모습, 머신 존' }
+  var PAGES = [
+    { key: 'pt', name: 'PT 프로그램', file: 'data/pt.json', list: 'steps', link: 'pt.html',
+      hint: '1:1 PT 프로그램 페이지(pt.html)의 대표 사진과 단계별 사진입니다. 비워 두면 PHOTO COMING SOON 으로 표시됩니다.',
+      slots: [
+        { id: 'hero',  title: '대표 사진 (페이지 맨 위 배경)', hint: '넓은 가로 사진. 수업 장면이나 센터 전경', fields: ['alt'] },
+        { id: 'step1', title: 'STEP.01 상담', hint: '트레이너와 상담하는 모습', fields: ['alt'] },
+        { id: 'step2', title: 'STEP.02 분석', hint: '인바디 측정, 체형 평가', fields: ['alt'] },
+        { id: 'step3', title: 'STEP.03 컨디셔닝', hint: '스트레칭, 가동성 케어', fields: ['alt'] },
+        { id: 'step4', title: 'STEP.04 트레이닝', hint: '1:1 수업 장면', fields: ['alt'] },
+        { id: 'step5', title: 'STEP.05 개인운동', hint: '혼자 운동하는 모습, 머신 존', fields: ['alt'] }
+      ] },
+    { key: 'center', name: '센터 둘러보기', file: 'data/center.json', list: 'gallery', link: 'center.html',
+      hint: '센터 둘러보기 페이지(center.html)의 대표 사진과 갤러리 5장입니다. 사진 위에 보이는 영문 라벨과 제목도 바꿀 수 있습니다.',
+      slots: [
+        { id: 'hero', title: '대표 사진 (페이지 맨 위 배경)', hint: '센터 입구나 전경', fields: ['alt'] },
+        { id: 'g1', title: '갤러리 1 (큰 칸)', hint: '가로로 넓게 보이는 자리', fields: ['label', 'title', 'alt'] },
+        { id: 'g2', title: '갤러리 2', hint: '', fields: ['label', 'title', 'alt'] },
+        { id: 'g3', title: '갤러리 3', hint: '', fields: ['label', 'title', 'alt'] },
+        { id: 'g4', title: '갤러리 4', hint: '', fields: ['label', 'title', 'alt'] },
+        { id: 'g5', title: '갤러리 5', hint: '', fields: ['label', 'title', 'alt'] }
+      ] }
   ];
+  var FIELD_LABEL = { label: '영문 라벨 (예: MACHINE ZONE)', title: '제목 (예: 프리미엄 머신 존)', alt: '사진 설명 (화면 낭독용, 선택)' };
   var $ = function (s, r) { return (r || document).querySelector(s); };
-  var tokenEl = $('#token'), authStatus = $('#authStatus'), logEl = $('#log'), slotsEl = $('#slots');
-  var token = '', data = null, dataSha = null;
+  var tokenEl = $('#token'), authStatus = $('#authStatus'), logEl = $('#log'), slotsEl = $('#slots'), tabsEl = $('#tabs');
+  var token = '', page = PAGES[0], data = null, dataSha = null;
 
   function log(m) { logEl.hidden = false; logEl.textContent += (new Date()).toLocaleTimeString() + '  ' + m + '\n'; logEl.scrollTop = logEl.scrollHeight; }
   function setStatus(el, msg, cls) { el.textContent = msg || ''; el.className = 'status' + (cls ? ' ' + cls : ''); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
   function gh(path, opt) {
     opt = opt || {};
     opt.headers = Object.assign({ 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }, opt.headers || {});
@@ -105,13 +129,24 @@
   function b64utf8(str) { return btoa(unescape(encodeURIComponent(str))); }
   function utf8b64(b64) { return decodeURIComponent(escape(atob(b64.replace(/\n/g, '')))); }
 
+  function renderTabs() {
+    tabsEl.innerHTML = '';
+    PAGES.forEach(function (p) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'tab' + (p === page ? ' on' : ''); b.textContent = p.name;
+      b.addEventListener('click', function () { page = p; renderTabs(); loadData(); });
+      tabsEl.appendChild(b);
+    });
+  }
   function loadData() {
-    setStatus(authStatus, '불러오는 중…');
-    return gh('data/pt.json').then(function (f) {
-      if (!f) { data = { updated: '', hero: { src: '', alt: '' }, steps: [] }; dataSha = null; }
+    setStatus(authStatus, page.name + ' 불러오는 중…');
+    slotsEl.innerHTML = '';
+    return gh(page.file).then(function (f) {
+      if (!f) { data = { updated: '', hero: { src: '', alt: '' } }; data[page.list] = []; dataSha = null; }
       else { data = JSON.parse(utf8b64(f.content)); dataSha = f.sha; }
-      setStatus(authStatus, '연결됨. 사진 자리를 불러왔습니다.', 'ok');
-      $('#slotsCard').hidden = false;
+      setStatus(authStatus, '연결됨. ' + page.name + ' 자리를 불러왔습니다.', 'ok');
+      $('#pages').hidden = false;
+      $('#pageTitle').textContent = '2. ' + page.name + ' 사진 자리';
+      $('#pageHint').innerHTML = page.hint + ' <a href="' + page.link + '" target="_blank" rel="noopener">페이지 열기</a>';
       renderSlots();
     }).catch(function (e) {
       setStatus(authStatus, '실패: ' + e.message + ' (토큰 권한이나 만료를 확인하세요)', 'err');
@@ -120,49 +155,54 @@
   }
   function getItem(id) {
     if (id === 'hero') { data.hero = data.hero || { src: '', alt: '' }; return data.hero; }
-    var s = (data.steps || []).filter(function (x) { return x.id === id; })[0];
-    if (!s) { s = { id: id, src: '', alt: '' }; data.steps = data.steps || []; data.steps.push(s); }
+    data[page.list] = data[page.list] || [];
+    var s = data[page.list].filter(function (x) { return x.id === id; })[0];
+    if (!s) { s = { id: id, src: '', alt: '' }; data[page.list].push(s); }
     return s;
   }
   function renderSlots() {
     slotsEl.innerHTML = '';
-    SLOTS.forEach(function (sl) {
+    page.slots.forEach(function (sl) {
       var item = getItem(sl.id);
       var box = document.createElement('div');
       box.className = 'card slot';
+      var fieldsHtml = sl.fields.map(function (f) {
+        return '<div><label>' + FIELD_LABEL[f] + '</label><input type="text" data-field="' + f + '" value="' + esc(item[f]) + '"></div>';
+      }).join('');
       box.innerHTML =
         '<div class="thumb">' + (item.src ? '<img src="' + SITE + item.src + '?v=' + encodeURIComponent(data.updated || Date.now()) + '" alt="">' : 'EMPTY') + '</div>' +
         '<div class="fields">' +
-          '<div><b>' + sl.title + '</b><div class="dim">' + sl.hint + (item.src ? ' · 현재: ' + item.src : '') + '</div></div>' +
-          '<div><label>사진 설명 (화면 낭독용, 선택)</label><input type="text" class="alt" value="' + (item.alt || '').replace(/"/g, '&quot;') + '" placeholder="예: 트레이너와 상담하는 모습"></div>' +
-          '<div class="row"><input type="file" class="file" accept="image/*"><button class="btn up">업로드</button>' + (item.src ? '<button class="btn btn-dark rm">사진 빼기</button>' : '') + '</div>' +
+          '<div><b>' + sl.title + '</b><div class="dim">' + (sl.hint ? sl.hint + ' · ' : '') + (item.src ? '현재: ' + item.src : '사진 없음') + '</div></div>' +
+          (sl.fields.length > 1 ? '<div class="two">' + fieldsHtml + '</div>' : fieldsHtml) +
+          '<div class="row"><input type="file" class="file" accept="image/*"><button class="btn up">사진 업로드</button><button class="btn btn-dark txt">문구 저장</button>' + (item.src ? '<button class="btn btn-dark rm">사진 빼기</button>' : '') + '</div>' +
           '<p class="status"></p>' +
         '</div>';
-      var fileEl = $('.file', box), altEl = $('.alt', box), st = $('.status', box), up = $('.up', box), rm = $('.rm', box);
+      var fileEl = $('.file', box), st = $('.status', box), up = $('.up', box), txt = $('.txt', box), rm = $('.rm', box);
+      function readFields() { box.querySelectorAll('input[data-field]').forEach(function (i) { item[i.getAttribute('data-field')] = i.value.trim(); }); }
       up.addEventListener('click', function () {
         var f = fileEl.files && fileEl.files[0];
         if (!f) { setStatus(st, '먼저 사진 파일을 선택하세요.', 'err'); return; }
         up.disabled = true; setStatus(st, '압축 중…');
         compress(f, sl.id === 'hero' ? 2000 : 1800).then(function (b64) {
           setStatus(st, '업로드 중… (' + Math.round(b64.length * 0.75 / 1024) + 'KB)');
-          var path = 'images/pt/' + sl.id + '.jpg';
-          return putFile(path, b64, sl.title + ' 사진 등록').then(function () {
-            item.src = path; item.alt = altEl.value.trim();
-            return saveData(sl.title + ' 사진 등록');
+          var path = 'images/' + page.key + '/' + sl.id + '.jpg';
+          return putFile(path, b64, page.name + ' · ' + sl.title + ' 사진 등록').then(function () {
+            item.src = path; readFields();
+            return saveData(page.name + ' · ' + sl.title + ' 사진 등록');
           });
         }).then(function () {
-          setStatus(st, '완료. 약 1분 뒤 pt.html에 반영됩니다.', 'ok'); log(sl.id + ' uploaded'); renderSlots();
+          setStatus(st, '완료. 약 1분 뒤 반영됩니다.', 'ok'); log(page.key + '/' + sl.id + ' uploaded'); renderSlots();
         }).catch(function (e) { setStatus(st, '실패: ' + e.message, 'err'); log(sl.id + ' error: ' + e.message); up.disabled = false; });
       });
-      altEl.addEventListener('change', function () {
-        if (!item.src) return;
-        item.alt = altEl.value.trim();
-        saveData(sl.title + ' 설명 수정').then(function () { setStatus(st, '설명 저장됨', 'ok'); }).catch(function (e) { setStatus(st, '실패: ' + e.message, 'err'); });
+      txt.addEventListener('click', function () {
+        txt.disabled = true; readFields();
+        saveData(page.name + ' · ' + sl.title + ' 문구 수정').then(function () { setStatus(st, '문구 저장됨. 약 1분 뒤 반영됩니다.', 'ok'); txt.disabled = false; })
+          .catch(function (e) { setStatus(st, '실패: ' + e.message, 'err'); txt.disabled = false; });
       });
       if (rm) rm.addEventListener('click', function () {
-        if (!confirm(sl.title + ' 사진을 페이지에서 뺄까요? (파일은 저장소에 남고, 자리는 PHOTO COMING SOON 으로 돌아갑니다)')) return;
+        if (!confirm(sl.title + ' 사진을 페이지에서 뺄까요? (파일은 저장소에 남고, 자리는 빈 상태로 돌아갑니다)')) return;
         rm.disabled = true; item.src = '';
-        saveData(sl.title + ' 사진 해제').then(function () { log(sl.id + ' cleared'); renderSlots(); }).catch(function (e) { setStatus(st, '실패: ' + e.message, 'err'); rm.disabled = false; });
+        saveData(page.name + ' · ' + sl.title + ' 사진 해제').then(function () { log(sl.id + ' cleared'); renderSlots(); }).catch(function (e) { setStatus(st, '실패: ' + e.message, 'err'); rm.disabled = false; });
       });
       slotsEl.appendChild(box);
     });
@@ -192,7 +232,7 @@
     data.updated = new Date().toISOString();
     var body = { message: '[admin] ' + message, content: b64utf8(JSON.stringify(data, null, 2) + '\n'), branch: BRANCH };
     if (dataSha) body.sha = dataSha;
-    return gh('data/pt.json', { method: 'PUT', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } })
+    return gh(page.file, { method: 'PUT', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } })
       .then(function (r) { dataSha = r.content.sha; });
   }
 
@@ -200,13 +240,13 @@
     token = tokenEl.value.trim();
     if (!token) { setStatus(authStatus, '토큰을 입력하세요.', 'err'); return; }
     try { localStorage.setItem('jg_admin_token', token); } catch (e) {}
-    loadData();
+    renderTabs(); loadData();
   });
   $('#clearToken').addEventListener('click', function () {
     token = ''; tokenEl.value = ''; try { localStorage.removeItem('jg_admin_token'); } catch (e) {}
-    $('#slotsCard').hidden = true; setStatus(authStatus, '토큰을 지웠습니다.');
+    $('#pages').hidden = true; setStatus(authStatus, '토큰을 지웠습니다.');
   });
-  try { var saved = localStorage.getItem('jg_admin_token'); if (saved) { token = saved; tokenEl.value = saved; loadData(); } } catch (e) {}
+  try { var saved = localStorage.getItem('jg_admin_token'); if (saved) { token = saved; tokenEl.value = saved; renderTabs(); loadData(); } } catch (e) {}
 })();
 </script>
 </body>

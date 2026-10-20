@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-photos="data/center.json">
 
 <div class="hero-grain" aria-hidden="true"></div>
 
@@ -43,10 +43,10 @@
     <a href="index.html#programs">PROGRAM <small>1:1 PT, 헬스 회원권</small></a>
     <a href="pt.html">PT GUIDE <small>1:1 PT 안내</small></a>
     <a href="center.html">CENTER <small>센터 둘러보기</small></a>
-    <a href="index.html#facility">FACILITY <small>시설 안내</small></a>
-    <a href="index.html#price">PRICE <small>헬스 이용권</small></a>
-    <a href="index.html#reviews">REVIEWS <small>방문자 리뷰</small></a>
-    <a href="index.html#hours">HOURS <small>운영시간</small></a>
+    <a href="price.html">PRICE <small>이용권 안내</small></a>
+    <a href="hours.html">HOURS <small>운영시간 안내</small></a>
+    <a href="faq.html">FAQ <small>자주 묻는 질문</small></a>
+    <a href="index.html#reviews">REVIEWS <small>방문자 후기</small></a>
     <a href="index.html#visit">VISIT <small>오시는 길</small></a>
   </nav>
   <div class="wrap menu-foot">
@@ -59,14 +59,14 @@
 <main id="top">
 
   <section class="page-hero" aria-labelledby="center-title">
-    <div class="bg" aria-hidden="true"><img src="images/gym-main.jpg" alt="" fetchpriority="high"></div>
+    <div class="bg" aria-hidden="true" data-slot="hero"><img src="images/gym-main.jpg" alt="" fetchpriority="high"></div>
     <div class="wrap">
       <p class="crumb"><a href="index.html">HOME</a><span aria-hidden="true">/</span><a href="index.html#programs">PROGRAM</a><span aria-hidden="true">/</span><span>센터 둘러보기</span></p>
       <span class="chip">Facility Tour</span>
       <h1 id="center-title">프리미엄 호텔식 헬스장, 정글짐 내수점</h1>
       <p class="lead">내수 다이소 건물 3층. Life Fitness 인시그니아 머신과 프라이빗 1인 샤워실, 파우더룸, 안마의자까지. 운동 전후 동선까지 생각해 만든 공간입니다.</p>
       <div class="cta">
-        <a class="btn" href="index.html#price">헬스 이용권 보기 <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn" href="price.html">헬스 이용권 보기 <span class="arr" aria-hidden="true">→</span></a>
         <a class="btn btn-dark" href="https://map.naver.com/p/entry/place/2002321795?placePath=/photo" target="_blank" rel="noopener">네이버 사진 더보기</a>
       </div>
     </div>
@@ -77,11 +77,11 @@
       <h2 class="h2 rv" id="tour-title">공간 둘러보기</h2>
       <p class="sub rv rv-2">정글 콘셉트의 포토존부터 머신 존, 릴렉스 존, 파우더룸까지 한 층에 모두 있습니다.</p>
       <div class="gallery">
-        <figure class="rv"><img src="images/gym-machineszone.jpg" alt="Life Fitness 머신이 줄지어 있는 머신 존" loading="lazy"><figcaption><small>MACHINE ZONE</small>프리미엄 머신 존</figcaption></figure>
-        <figure class="rv rv-2"><img src="images/gym-jungle.jpg" alt="JUNGLE GYM 테이프와 조명으로 꾸민 정글 포토존" loading="lazy"><figcaption><small>PHOTO ZONE</small>정글 포토존</figcaption></figure>
-        <figure class="rv"><img src="images/gym-machines.jpg" alt="스쿼트 랙이 줄지어 있는 프리웨이트 존" loading="lazy"><figcaption><small>FREE WEIGHT</small>프리웨이트 존</figcaption></figure>
-        <figure class="rv rv-2"><img src="images/gym-relax.jpg" alt="안마의자 세 대가 놓인 릴렉스 존" loading="lazy"><figcaption><small>RELAX</small>릴렉스 존</figcaption></figure>
-        <figure class="rv rv-3"><img src="images/gym-powder.jpg" alt="세면대와 거울이 있는 파우더룸" loading="lazy"><figcaption><small>POWDER ROOM</small>프라이빗 샤워실 · 파우더룸</figcaption></figure>
+        <figure class="rv" data-slot="g1"><img src="images/gym-machineszone.jpg" alt="Life Fitness 머신이 줄지어 있는 머신 존" loading="lazy"><figcaption><small class="cap-label">MACHINE ZONE</small><span class="cap-title">프리미엄 머신 존</span></figcaption></figure>
+        <figure class="rv rv-2" data-slot="g2"><img src="images/gym-jungle.jpg" alt="JUNGLE GYM 테이프와 조명으로 꾸민 정글 포토존" loading="lazy"><figcaption><small class="cap-label">PHOTO ZONE</small><span class="cap-title">정글 포토존</span></figcaption></figure>
+        <figure class="rv" data-slot="g3"><img src="images/gym-machines.jpg" alt="스쿼트 랙이 줄지어 있는 프리웨이트 존" loading="lazy"><figcaption><small class="cap-label">FREE WEIGHT</small><span class="cap-title">프리웨이트 존</span></figcaption></figure>
+        <figure class="rv rv-2" data-slot="g4"><img src="images/gym-relax.jpg" alt="안마의자 세 대가 놓인 릴렉스 존" loading="lazy"><figcaption><small class="cap-label">RELAX</small><span class="cap-title">릴렉스 존</span></figcaption></figure>
+        <figure class="rv rv-3" data-slot="g5"><img src="images/gym-powder.jpg" alt="세면대와 거울이 있는 파우더룸" loading="lazy"><figcaption><small class="cap-label">POWDER ROOM</small><span class="cap-title">프라이빗 샤워실 · 파우더룸</span></figcaption></figure>
       </div>
     </div>
   </section>
@@ -132,7 +132,7 @@
           </ul>
           <p class="jibun" style="margin-top:16px">부가세 별도. 일일권은 예약 없이 당일 이용 가능하며 실내용 운동화를 챙겨 오세요.</p>
           <div class="visit-cta">
-            <a class="btn" href="index.html#price">이용권 전체 보기 <span class="arr" aria-hidden="true">→</span></a>
+            <a class="btn" href="price.html">이용권 전체 보기 <span class="arr" aria-hidden="true">→</span></a>
             <a class="btn btn-dark" href="pt.html">1:1 PT 안내</a>
           </div>
         </div>
@@ -188,5 +188,6 @@
 </footer>
 
 <script src="js/site.js"></script>
+<script src="js/photos.js"></script>
 </body>
 </html>

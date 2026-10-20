@@ -1,0 +1,44 @@
+{
+  "updated": "",
+  "hero": {
+    "src": "images/gym-main.jpg",
+    "alt": "정글짐 입구 바위 동굴"
+  },
+  "gallery": [
+    {
+      "id": "g1",
+      "src": "images/gym-machineszone.jpg",
+      "label": "MACHINE ZONE",
+      "title": "프리미엄 머신 존",
+      "alt": "Life Fitness 머신이 줄지어 있는 머신 존"
+    },
+    {
+      "id": "g2",
+      "src": "images/gym-jungle.jpg",
+      "label": "PHOTO ZONE",
+      "title": "정글 포토존",
+      "alt": "JUNGLE GYM 테이프와 조명으로 꾸민 정글 포토존"
+    },
+    {
+      "id": "g3",
+      "src": "images/gym-machines.jpg",
+      "label": "FREE WEIGHT",
+      "title": "프리웨이트 존",
+      "alt": "스쿼트 랙이 줄지어 있는 프리웨이트 존"
+    },
+    {
+      "id": "g4",
+      "src": "images/gym-relax.jpg",
+      "label": "RELAX",
+      "title": "릴렉스 존",
+      "alt": "안마의자 세 대가 놓인 릴렉스 존"
+    },
+    {
+      "id": "g5",
+      "src": "images/gym-powder.jpg",
+      "label": "POWDER ROOM",
+      "title": "프라이빗 샤워실 · 파우더룸",
+      "alt": "세면대와 거울이 있는 파우더룸"
+    }
+  ]
+}
