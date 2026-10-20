@@ -88,6 +88,9 @@
   var API = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/';
   var SITE = 'https://' + OWNER + '.github.io/' + REPO + '/';
   var PAGES = [
+    { key: 'features', name: '메인 카드', file: 'data/features.json', list: 'items', link: 'index.html#features', dynamic: true, fields: ['title', 'text', 'alt'],
+      hint: '메인 사자 로고 아래에서 흐르는 카드입니다. 제목과 설명, 사진을 바꾸고 카드를 추가·삭제·순서 변경할 수 있습니다. 사진은 4:3 비율로 잘려 보입니다.',
+      slots: [] },
     { key: 'pt', name: 'PT 프로그램', file: 'data/pt.json', list: 'steps', link: 'pt.html',
       hint: '1:1 PT 프로그램 페이지(pt.html)의 대표 사진과 단계별 사진입니다. 비워 두면 PHOTO COMING SOON 으로 표시됩니다.',
       slots: [
@@ -109,7 +112,7 @@
         { id: 'g5', title: '갤러리 5', hint: '', fields: ['label', 'title', 'alt'] }
       ] }
   ];
-  var FIELD_LABEL = { label: '영문 라벨 (예: MACHINE ZONE)', title: '제목 (예: 프리미엄 머신 존)', alt: '사진 설명 (화면 낭독용, 선택)' };
+  var FIELD_LABEL = { label: '영문 라벨 (예: MACHINE ZONE)', title: '제목', text: '설명 (한두 줄)', alt: '사진 설명 (화면 낭독용, 선택)' };
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var tokenEl = $('#token'), authStatus = $('#authStatus'), logEl = $('#log'), slotsEl = $('#slots'), tabsEl = $('#tabs');
   var token = '', page = PAGES[0], data = null, dataSha = null;
@@ -154,15 +157,30 @@
     });
   }
   function getItem(id) {
-    if (id === 'hero') { data.hero = data.hero || { src: '', alt: '' }; return data.hero; }
+    if (id === 'hero' && !page.dynamic) { data.hero = data.hero || { src: '', alt: '' }; return data.hero; }
     data[page.list] = data[page.list] || [];
     var s = data[page.list].filter(function (x) { return x.id === id; })[0];
     if (!s) { s = { id: id, src: '', alt: '' }; data[page.list].push(s); }
     return s;
   }
+  function slotDefs() {
+    if (!page.dynamic) return page.slots;
+    data[page.list] = data[page.list] || [];
+    return data[page.list].map(function (it, i) { return { id: it.id, title: '카드 ' + (i + 1), hint: '', fields: page.fields, index: i }; });
+  }
   function renderSlots() {
     slotsEl.innerHTML = '';
-    page.slots.forEach(function (sl) {
+    var defs = slotDefs();
+    if (page.dynamic) {
+      var addBox = document.createElement('div'); addBox.className = 'card row';
+      addBox.innerHTML = '<button class="btn" type="button">+ 카드 추가</button><span class="dim">카드는 ' + defs.length + '개. 추가 후 제목·설명을 쓰고 "문구 저장", 사진은 "사진 업로드".</span>';
+      addBox.querySelector('button').addEventListener('click', function () {
+        data[page.list].push({ id: 'c' + Date.now().toString(36), src: '', title: '', text: '', alt: '' });
+        saveData(page.name + ' · 카드 추가').then(renderSlots).catch(function (e) { log('add error: ' + e.message); });
+      });
+      slotsEl.appendChild(addBox);
+    }
+    defs.forEach(function (sl) {
       var item = getItem(sl.id);
       var box = document.createElement('div');
       box.className = 'card slot';
@@ -174,7 +192,8 @@
         '<div class="fields">' +
           '<div><b>' + sl.title + '</b><div class="dim">' + (sl.hint ? sl.hint + ' · ' : '') + (item.src ? '현재: ' + item.src : '사진 없음') + '</div></div>' +
           (sl.fields.length > 1 ? '<div class="two">' + fieldsHtml + '</div>' : fieldsHtml) +
-          '<div class="row"><input type="file" class="file" accept="image/*"><button class="btn up">사진 업로드</button><button class="btn btn-dark txt">문구 저장</button>' + (item.src ? '<button class="btn btn-dark rm">사진 빼기</button>' : '') + '</div>' +
+          '<div class="row"><input type="file" class="file" accept="image/*"><button class="btn up">사진 업로드</button><button class="btn btn-dark txt">문구 저장</button>' + (item.src ? '<button class="btn btn-dark rm">사진 빼기</button>' : '') +
+            (page.dynamic ? '<button class="btn btn-dark mv" data-dir="-1" title="위로">▲</button><button class="btn btn-dark mv" data-dir="1" title="아래로">▼</button><button class="btn btn-dark del">카드 삭제</button>' : '') + '</div>' +
           '<p class="status"></p>' +
         '</div>';
       var fileEl = $('.file', box), st = $('.status', box), up = $('.up', box), txt = $('.txt', box), rm = $('.rm', box);
@@ -199,6 +218,21 @@
         saveData(page.name + ' · ' + sl.title + ' 문구 수정').then(function () { setStatus(st, '문구 저장됨. 약 1분 뒤 반영됩니다.', 'ok'); txt.disabled = false; })
           .catch(function (e) { setStatus(st, '실패: ' + e.message, 'err'); txt.disabled = false; });
       });
+      if (page.dynamic) {
+        box.querySelectorAll('.mv').forEach(function (b) {
+          b.addEventListener('click', function () {
+            var list = data[page.list], i = sl.index, j = i + parseInt(b.getAttribute('data-dir'), 10);
+            if (j < 0 || j >= list.length) return;
+            var t = list[i]; list[i] = list[j]; list[j] = t;
+            saveData(page.name + ' · 카드 순서 변경').then(renderSlots).catch(function (e) { setStatus(st, '실패: ' + e.message, 'err'); });
+          });
+        });
+        $('.del', box).addEventListener('click', function () {
+          if (!confirm(sl.title + ' 를 삭제할까요? (사진 파일은 저장소에 남습니다)')) return;
+          data[page.list].splice(sl.index, 1);
+          saveData(page.name + ' · 카드 삭제').then(renderSlots).catch(function (e) { setStatus(st, '실패: ' + e.message, 'err'); });
+        });
+      }
       if (rm) rm.addEventListener('click', function () {
         if (!confirm(sl.title + ' 사진을 페이지에서 뺄까요? (파일은 저장소에 남고, 자리는 빈 상태로 돌아갑니다)')) return;
         rm.disabled = true; item.src = '';
