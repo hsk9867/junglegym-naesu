@@ -536,13 +536,13 @@ footer.site .fine { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 8px 2
 @media (max-width: 900px) { .info-links { grid-template-columns: 1fr; } .note-grid { grid-template-columns: 1fr; } .page-head { padding-top: 120px; } }
 
 /* ---------- Feature list (main) ---------- */
-.feat-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px 32px; margin-top: clamp(8px, 2vw, 24px); }
+.feat-list { list-style: none; margin: clamp(8px, 2vw, 24px) 0 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 36px; max-width: 720px; }
 .feat { padding-top: 22px; border-top: 1px solid var(--line-soft); }
 .feat .n { display: block; font-family: var(--display); font-size: 15px; letter-spacing: .22em; color: var(--red); }
 .feat h3 { margin-top: 14px; font-size: clamp(20px, 1.7vw, 24px); font-weight: 800; letter-spacing: -.02em; }
-.feat p { margin-top: 10px; color: var(--muted); font-size: 15px; line-height: 1.7; max-width: 22em; }
+.feat p { margin-top: 10px; color: var(--muted); font-size: 16px; line-height: 1.7; max-width: 34em; }
 .programs-title { margin-top: clamp(72px, 9vw, 120px); }
-@media (max-width: 900px) { .feat-list { grid-template-columns: 1fr 1fr; } }
+
 @media (max-width: 560px) { .feat-list { grid-template-columns: 1fr; gap: 34px; } .feat { padding-top: 18px; } }
 
 /* ---------- Reveal ---------- */
