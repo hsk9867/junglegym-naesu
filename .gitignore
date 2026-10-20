@@ -1,2 +1,4 @@
 .DS_Store
 Thumbs.db
+stats-worker/.wrangler/
+stats-worker/node_modules/
