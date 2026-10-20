@@ -21,7 +21,6 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="css/style.css">
-<script>try{if(sessionStorage.getItem("jg_intro_seen"))document.documentElement.classList.add("intro-skip");else document.documentElement.classList.add("intro-open");}catch(e){document.documentElement.classList.add("intro-open");}</script>
 </head>
 <body>
 
@@ -60,18 +59,13 @@
 
 <main id="top">
 
-  <section class="intro" id="intro" aria-label="정글짐 인트로 영상" tabindex="-1">
-    <div class="intro-stage">
-      <video class="intro-video" autoplay muted loop playsinline preload="auto" poster="images/gym-main.jpg">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true">
+      <img src="images/gym-main.jpg" alt="" fetchpriority="high">
+      <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="images/gym-main.jpg">
         <source src="video/intro.mp4" type="video/mp4">
       </video>
-      <div class="intro-shade" aria-hidden="true"></div>
-      <button class="intro-cue" type="button" id="introSkip" aria-label="인트로 넘기기"><span class="arrow"></span>SWIPE UP<small>위로 밀어서 시작</small></button>
     </div>
-  </section>
-
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="hero-bg" aria-hidden="true"><img src="images/gym-main.jpg" alt="" fetchpriority="high"></div>
     <div class="wrap hero-inner">
       <p class="eyebrow">KING OF THE JUNGLE</p>
       <h1 id="hero-title"><span class="line"><span class="word-in">JUNGLE</span></span><span class="line line-gym"><span class="word-in">GYM</span></span></h1>
