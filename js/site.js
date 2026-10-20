@@ -27,27 +27,60 @@
     });
   });
 
-  // 인트로 영상: 자동재생 보장 + 화면 밖이면 정지, 스크롤 페이드 폴백
-  var iv = document.querySelector('.intro-video');
-  var stage = document.querySelector('.intro-stage');
-  if (iv) {
+  // 인트로 영상 오버레이: 계속 재생, 위로 드래그(스와이프)·휠·키보드로 닫기
+  var intro = document.getElementById('intro');
+  if (intro && !document.documentElement.classList.contains('intro-skip')) {
+    var ivid = intro.querySelector('.intro-video'), istage = intro.querySelector('.intro-stage');
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) { iv.removeAttribute('autoplay'); iv.pause(); }
-    else { var pp = iv.play(); if (pp && pp.catch) pp.catch(function () {}); }
-    if ('IntersectionObserver' in window && !reduce) {
-      new IntersectionObserver(function (es) {
-        es.forEach(function (e) { if (e.isIntersecting) { var p2 = iv.play(); if (p2 && p2.catch) p2.catch(function () {}); } else { iv.pause(); } });
-      }, { threshold: 0.05 }).observe(iv);
+    var H = function () { return intro.offsetHeight || window.innerHeight; };
+    var closed = false, down = false, startY = 0, lastY = 0, lastT = 0, vy = 0, dy = 0;
+    if (ivid) { var pp = ivid.play(); if (pp && pp.catch) pp.catch(function () {}); }
+    function setDrag(y) {
+      dy = y; var p = Math.min(1, Math.abs(y) / (H() * 0.6));
+      istage.style.transform = 'translate3d(0,' + y + 'px,0) scale(' + (1 - p * 0.06) + ')';
+      istage.style.opacity = String(1 - p * 0.7);
     }
-    if (stage && !reduce && !(window.CSS && CSS.supports && CSS.supports('animation-timeline: view()'))) {
-      var fade = function () {
-        var h = stage.offsetHeight || window.innerHeight;
-        var p = Math.min(1, Math.max(0, window.scrollY / (h * 0.8)));
-        stage.style.opacity = String(1 - p);
-        stage.style.transform = 'scale(' + (1 - p * 0.08) + ') translateY(' + (-p * 8) + '%)';
-      };
-      window.addEventListener('scroll', fade, { passive: true }); fade();
+    function close(dir) {
+      if (closed) return; closed = true;
+      intro.classList.remove('dragging'); intro.classList.add('leaving');
+      istage.style.transform = 'translate3d(0,' + (dir < 0 ? -110 : 110) + '%,0) scale(.94)';
+      istage.style.opacity = '0';
+      document.documentElement.classList.remove('intro-open');
+      document.documentElement.classList.add('intro-done');
+      try { sessionStorage.setItem('jg_intro_seen', '1'); } catch (e) {}
+      var done = function () { if (ivid) ivid.pause(); if (intro.parentNode) intro.parentNode.removeChild(intro); };
+      istage.addEventListener('transitionend', done, { once: true });
+      setTimeout(done, reduce ? 400 : 900);
     }
+    function snapBack() { intro.classList.remove('dragging'); istage.style.transform = ''; istage.style.opacity = ''; }
+    intro.addEventListener('pointerdown', function (e) {
+      if (closed || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      down = true; startY = lastY = e.clientY; lastT = e.timeStamp; vy = 0;
+      intro.classList.add('dragging');
+      try { intro.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    intro.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dt = Math.max(1, e.timeStamp - lastT); vy = (e.clientY - lastY) / dt; lastY = e.clientY; lastT = e.timeStamp;
+      setDrag(e.clientY - startY);
+    });
+    function release() {
+      if (!down) return; down = false;
+      if (Math.abs(dy) > H() * 0.22 || (Math.abs(dy) > 48 && Math.abs(vy) > 0.6)) close(dy < 0 ? -1 : 1);
+      else snapBack();
+      dy = 0;
+    }
+    intro.addEventListener('pointerup', release);
+    intro.addEventListener('pointercancel', release);
+    intro.addEventListener('wheel', function (e) { e.preventDefault(); if (Math.abs(e.deltaY) > 20) close(e.deltaY > 0 ? -1 : 1); }, { passive: false });
+    intro.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
+    document.addEventListener('keydown', function (e) {
+      if (closed) return;
+      if (['ArrowDown', 'PageDown', ' ', 'Enter', 'Escape', 'ArrowUp'].indexOf(e.key) > -1) { e.preventDefault(); close(-1); }
+    });
+    var skip = document.getElementById('introSkip');
+    if (skip) skip.addEventListener('click', function (e) { e.stopPropagation(); close(-1); });
+    intro.focus({ preventScroll: true });
   }
 
   var els = document.querySelectorAll('.rv');
