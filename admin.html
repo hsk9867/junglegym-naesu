@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>정글짐 관리자 · 사진 등록</title>
+<title>정글짐 관리자</title>
 <link rel="icon" href="images/favicon.png" type="image/png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -42,17 +42,82 @@
   details summary { cursor:pointer; color:var(--muted); font-size:14px; }
   ol { padding-left:20px; color:var(--muted); font-size:14px; }
   a { color:var(--text); }
+  .gate { max-width:560px; }
+  form.row { margin:0; }
   @media (max-width:700px) { .slot { grid-template-columns:1fr; } .two { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1><img src="images/logo-mark.png" alt="">정글짐 관리자 <span class="tag">사진 · 문구</span></h1>
+<!-- 잠금 화면: 비밀번호가 맞아야 아래 관리자 화면이 열립니다 -->
+<div class="wrap gate" id="gate">
+  <h1><img src="images/logo-mark.png" alt="">정글짐 관리자</h1>
+  <section class="card" id="gateLoading"><p class="muted">확인 중…</p></section>
+
+  <section class="card" id="gateLogin" hidden>
+    <h2>비밀번호를 입력하세요</h2>
+    <form id="loginForm" class="row" autocomplete="on">
+      <input type="password" id="pw" placeholder="관리자 비밀번호" style="flex:1;min-width:200px" autocomplete="current-password" required>
+      <button class="btn" type="submit" id="loginBtn">들어가기</button>
+    </form>
+    <p class="status" id="loginStatus"></p>
+    <p class="dim" style="margin-top:8px">비밀번호를 잊었다면 GitHub 저장소에서 <b>data/admin.json</b> 파일을 삭제하면 처음 설정 화면이 다시 나옵니다.</p>
+  </section>
+
+  <section class="card" id="gateSetup" hidden>
+    <h2>관리자 비밀번호 처음 설정</h2>
+    <p class="muted">아직 비밀번호가 없습니다. 비밀번호와 GitHub 토큰을 넣으면 비밀번호(복원 불가능한 해시)가 저장소에 저장되고, 다음부터는 비밀번호만으로 들어올 수 있습니다.</p>
+    <form id="setupForm" class="fields" style="margin-top:14px">
+      <div class="two">
+        <div><label for="pw1">새 비밀번호 (8자 이상)</label><input type="password" id="pw1" autocomplete="new-password" required minlength="8"></div>
+        <div><label for="pw2">비밀번호 확인</label><input type="password" id="pw2" autocomplete="new-password" required></div>
+      </div>
+      <div><label for="setupToken">GitHub 토큰 (이 기기에 암호화되어 저장됩니다)</label><input type="password" id="setupToken" placeholder="github_pat_… 또는 ghp_…" autocomplete="off" required></div>
+      <div class="row"><button class="btn" type="submit" id="setupBtn">설정하고 들어가기</button></div>
+    </form>
+    <p class="status" id="setupStatus"></p>
+    <details style="margin-top:10px">
+      <summary>토큰 만드는 방법</summary>
+      <ol>
+        <li>GitHub 로그인 → 우측 상단 프로필 → <b>Settings</b> → 왼쪽 맨 아래 <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b></li>
+        <li>Repository access: <b>Only select repositories</b> → <b>junglegym-naesu</b> 선택</li>
+        <li>Permissions → Repository permissions → <b>Contents: Read and write</b> 만 켜기</li>
+        <li>Generate 후 표시되는 토큰을 복사해 위 칸에 붙여넣기 (다시 볼 수 없으니 바로 붙여넣기)</li>
+      </ol>
+    </details>
+  </section>
+
+  <section class="card" id="gateInsecure" hidden>
+    <h2>보안 연결(https)이 필요합니다</h2>
+    <p class="muted">비밀번호 암호화 기능은 https 주소에서만 동작합니다. <a id="secureLink" href="https://hsk9867.github.io/junglegym-naesu/admin.html">https 주소로 열기</a></p>
+  </section>
+</div>
+
+<div class="wrap" id="app" hidden>
+  <div class="row" style="justify-content:space-between">
+    <h1><img src="images/logo-mark.png" alt="">정글짐 관리자 <span class="tag">사진 · 문구</span></h1>
+    <div class="row">
+      <button class="btn btn-dark" id="pwChangeBtn" type="button">비밀번호 변경</button>
+      <button class="btn btn-dark" id="lockBtn" type="button">잠금</button>
+    </div>
+  </div>
   <p class="muted" style="margin-top:8px">여기서 올린 사진과 문구는 GitHub 저장소(hsk9867/junglegym-naesu)에 바로 커밋되고, 약 1분 뒤 홈페이지에 반영됩니다.</p>
 
-  <section class="card" id="auth">
+  <section class="card" id="pwChange" hidden>
+    <h2>비밀번호 변경</h2>
+    <form id="pwChangeForm" class="fields">
+      <div class="two">
+        <div><label for="npw1">새 비밀번호 (8자 이상)</label><input type="password" id="npw1" autocomplete="new-password" required minlength="8"></div>
+        <div><label for="npw2">비밀번호 확인</label><input type="password" id="npw2" autocomplete="new-password" required></div>
+      </div>
+      <div class="row"><button class="btn" type="submit">변경</button><button class="btn btn-dark" type="button" id="pwChangeCancel">닫기</button></div>
+    </form>
+    <p class="status" id="pwChangeStatus"></p>
+  </section>
+
+  <section class="card" id="auth" hidden>
     <h2>1. GitHub 토큰</h2>
-    <label for="token">Personal Access Token (이 브라우저에만 저장됩니다)</label>
+    <p class="muted" style="margin-bottom:10px">이 기기에는 저장된 토큰이 없습니다. 한 번 넣으면 비밀번호로 암호화되어 이 브라우저에 저장됩니다.</p>
+    <label for="token">Personal Access Token</label>
     <div class="row">
       <input type="password" id="token" placeholder="github_pat_… 또는 ghp_…" style="flex:1;min-width:240px" autocomplete="off">
       <button class="btn" id="saveToken">저장하고 불러오기</button>
@@ -87,7 +152,7 @@
 (function () {
   var OWNER = 'hsk9867', REPO = 'junglegym-naesu', BRANCH = 'main';
   var API = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/';
-  var SITE = 'https://' + OWNER + '.github.io/' + REPO + '/';
+  var SITE = /^https?:/.test(location.protocol) ? new URL('.', location.href).href : 'https://xn--bj0bp80c9gb.com/';
   var PAGES = [
     { key: 'features', name: '메인 운영 원칙', file: 'data/features.json', list: 'items', link: 'index.html#features', dynamic: true, noImage: true, fields: ['title', 'text'],
       hint: '메인 사자 로고 아래 01, 02… 번호가 붙는 글 목록입니다. 제목과 설명을 바꾸고 항목을 추가·삭제·순서 변경할 수 있습니다. 번호는 순서대로 자동으로 붙습니다.',
@@ -117,6 +182,125 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var tokenEl = $('#token'), authStatus = $('#authStatus'), logEl = $('#log'), slotsEl = $('#slots'), tabsEl = $('#tabs');
   var token = '', page = PAGES[0], data = null, dataSha = null;
+
+  /* ---------- 비밀번호 잠금 ----------
+     data/admin.json 에 PBKDF2(SHA-256, 30만 회) 해시와 salt 가 저장됩니다. 같은 파생값의 뒷부분(저장되지 않음)을
+     AES-GCM 키로 써서 GitHub 토큰을 이 브라우저(localStorage)에 암호화해 둡니다. 비밀번호가 맞아야 토큰이 풀립니다. */
+  var ADMIN_FILE = 'data/admin.json', ITER = 300000, VAULT = 'jg_admin_vault', LEGACY = 'jg_admin_token';
+  var auth = null, keyBits = null, te = new TextEncoder();
+  function b2h(buf) { return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join(''); }
+  function h2b(hex) { var a = new Uint8Array(hex.length / 2); for (var i = 0; i < a.length; i++) a[i] = parseInt(hex.substr(i * 2, 2), 16); return a; }
+  function rnd(n) { return b2h(crypto.getRandomValues(new Uint8Array(n))); }
+  function derive(pw, saltHex, iter) {
+    return crypto.subtle.importKey('raw', te.encode(pw), 'PBKDF2', false, ['deriveBits']).then(function (k) {
+      return crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: h2b(saltHex), iterations: iter }, k, 512);
+    }).then(function (bits) { var u = new Uint8Array(bits); return { hash: b2h(u.slice(0, 32)), key: u.slice(32) }; });
+  }
+  function aesKey() { return crypto.subtle.importKey('raw', keyBits, 'AES-GCM', false, ['encrypt', 'decrypt']); }
+  function vaultSave(tok) {
+    var iv = rnd(12);
+    return aesKey().then(function (k) { return crypto.subtle.encrypt({ name: 'AES-GCM', iv: h2b(iv) }, k, te.encode(tok)); })
+      .then(function (ct) { try { localStorage.setItem(VAULT, JSON.stringify({ iv: iv, ct: b2h(ct) })); localStorage.removeItem(LEGACY); } catch (e) {} });
+  }
+  function vaultLoad() {
+    var v = null; try { v = JSON.parse(localStorage.getItem(VAULT) || 'null'); } catch (e) {}
+    if (!v) return Promise.resolve('');
+    return aesKey().then(function (k) { return crypto.subtle.decrypt({ name: 'AES-GCM', iv: h2b(v.iv) }, k, h2b(v.ct)); })
+      .then(function (pt) { return new TextDecoder().decode(pt); }).catch(function () { return ''; });
+  }
+  function loadAuth() {
+    return fetch(ADMIN_FILE + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
+      if (r.status === 404) return null;
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (j) { return j && j.salt && j.hash ? j : null; });
+  }
+  function saveAuth(newPw, message) {
+    var salt = rnd(16);
+    return derive(newPw, salt, ITER).then(function (d) {
+      var obj = { salt: salt, hash: d.hash, iter: ITER, updated: new Date().toISOString() };
+      return gh(ADMIN_FILE).then(function (existing) {
+        var body = { message: '[admin] ' + message, content: b64utf8(JSON.stringify(obj, null, 2) + '\n'), branch: BRANCH };
+        if (existing && existing.sha) body.sha = existing.sha;
+        return gh(ADMIN_FILE, { method: 'PUT', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
+      }).then(function () { auth = obj; keyBits = d.key; });
+    });
+  }
+  function show(id, on) { var el = $('#' + id); if (el) el.hidden = !on; }
+  function unlock(tok) {
+    token = tok || '';
+    show('gate', false); show('app', true);
+    if (token) { show('auth', false); renderTabs(); loadData(); }
+    else { show('auth', true); show('pages', false); tokenEl.focus(); }
+  }
+  function gateInit() {
+    if (!(window.crypto && crypto.subtle) || !/^https?:/.test(location.protocol)) {
+      show('gateLoading', false); show('gateInsecure', true);
+      var l = $('#secureLink'); if (location.protocol === 'http:') l.href = 'https://' + location.host + location.pathname;
+      return;
+    }
+    loadAuth().then(function (a) {
+      auth = a; show('gateLoading', false);
+      if (auth) { show('gateLogin', true); $('#pw').focus(); }
+      else {
+        show('gateSetup', true);
+        try { var old = localStorage.getItem(LEGACY); if (old) $('#setupToken').value = old; } catch (e) {}
+        $('#pw1').focus();
+      }
+    }).catch(function (e) {
+      show('gateLoading', false); show('gateLogin', true);
+      setStatus($('#loginStatus'), '설정 파일을 읽지 못했습니다: ' + e.message, 'err');
+    });
+  }
+  $('#loginForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var pw = $('#pw').value, st = $('#loginStatus'), btn = $('#loginBtn');
+    if (!pw || !auth) return;
+    btn.disabled = true; setStatus(st, '확인 중…');
+    derive(pw, auth.salt, auth.iter || ITER).then(function (d) {
+      if (d.hash !== auth.hash) throw new Error('wrong');
+      keyBits = d.key;
+      return vaultLoad();
+    }).then(function (tok) {
+      if (!tok) { try { tok = localStorage.getItem(LEGACY) || ''; } catch (e) {} if (tok) vaultSave(tok); }
+      $('#pw').value = ''; btn.disabled = false; setStatus(st, '');
+      unlock(tok);
+    }).catch(function (e) {
+      btn.disabled = false;
+      setStatus(st, e.message === 'wrong' ? '비밀번호가 맞지 않습니다.' : '오류: ' + e.message, 'err');
+      $('#pw').select();
+    });
+  });
+  $('#setupForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var p1 = $('#pw1').value, p2 = $('#pw2').value, tok = $('#setupToken').value.trim(), st = $('#setupStatus'), btn = $('#setupBtn');
+    if (p1.length < 8) { setStatus(st, '비밀번호는 8자 이상이어야 합니다.', 'err'); return; }
+    if (p1 !== p2) { setStatus(st, '비밀번호 확인이 다릅니다.', 'err'); return; }
+    if (!tok) { setStatus(st, 'GitHub 토큰을 입력하세요.', 'err'); return; }
+    btn.disabled = true; setStatus(st, '저장 중…'); token = tok;
+    saveAuth(p1, '관리자 비밀번호 설정').then(function () { return vaultSave(tok); }).then(function () {
+      btn.disabled = false; unlock(tok);
+    }).catch(function (e) {
+      btn.disabled = false; token = '';
+      setStatus(st, '실패: ' + e.message + ' (토큰 권한을 확인하세요)', 'err');
+    });
+  });
+  $('#pwChangeBtn').addEventListener('click', function () { show('pwChange', !$('#pwChange').hidden ? false : true); if (!$('#pwChange').hidden) $('#npw1').focus(); });
+  $('#pwChangeCancel').addEventListener('click', function () { show('pwChange', false); });
+  $('#pwChangeForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var p1 = $('#npw1').value, p2 = $('#npw2').value, st = $('#pwChangeStatus');
+    if (p1.length < 8) { setStatus(st, '비밀번호는 8자 이상이어야 합니다.', 'err'); return; }
+    if (p1 !== p2) { setStatus(st, '비밀번호 확인이 다릅니다.', 'err'); return; }
+    if (!token) { setStatus(st, '먼저 GitHub 토큰을 저장하세요.', 'err'); return; }
+    setStatus(st, '저장 중…');
+    saveAuth(p1, '관리자 비밀번호 변경').then(function () { return vaultSave(token); }).then(function () {
+      $('#npw1').value = ''; $('#npw2').value = '';
+      setStatus(st, '변경되었습니다. 다음 접속부터 새 비밀번호를 사용합니다.', 'ok'); log('password changed');
+    }).catch(function (e) { setStatus(st, '실패: ' + e.message, 'err'); });
+  });
+  $('#lockBtn').addEventListener('click', function () { token = ''; keyBits = null; location.reload(); });
+
 
   function log(m) { logEl.hidden = false; logEl.textContent += (new Date()).toLocaleTimeString() + '  ' + m + '\n'; logEl.scrollTop = logEl.scrollHeight; }
   function setStatus(el, msg, cls) { el.textContent = msg || ''; el.className = 'status' + (cls ? ' ' + cls : ''); }
@@ -153,7 +337,7 @@
       $('#pageHint').innerHTML = page.hint + ' <a href="' + page.link + '" target="_blank" rel="noopener">페이지 열기</a>';
       renderSlots();
     }).catch(function (e) {
-      setStatus(authStatus, '실패: ' + e.message + ' (토큰 권한이나 만료를 확인하세요)', 'err');
+      setStatus(authStatus, '실패: ' + e.message + ' (토큰 권한이나 만료를 확인하세요)', 'err'); show('auth', true);
       log('load error: ' + e.message);
     });
   }
@@ -274,14 +458,13 @@
   $('#saveToken').addEventListener('click', function () {
     token = tokenEl.value.trim();
     if (!token) { setStatus(authStatus, '토큰을 입력하세요.', 'err'); return; }
-    try { localStorage.setItem('jg_admin_token', token); } catch (e) {}
-    renderTabs(); loadData();
+    vaultSave(token).then(function () { tokenEl.value = ''; renderTabs(); return loadData(); }).then(function () { show('auth', false); });
   });
   $('#clearToken').addEventListener('click', function () {
-    token = ''; tokenEl.value = ''; try { localStorage.removeItem('jg_admin_token'); } catch (e) {}
-    $('#pages').hidden = true; setStatus(authStatus, '토큰을 지웠습니다.');
+    token = ''; tokenEl.value = ''; try { localStorage.removeItem(VAULT); localStorage.removeItem(LEGACY); } catch (e) {}
+    $('#pages').hidden = true; setStatus(authStatus, '이 기기에 저장된 토큰을 지웠습니다.');
   });
-  try { var saved = localStorage.getItem('jg_admin_token'); if (saved) { token = saved; tokenEl.value = saved; renderTabs(); loadData(); } } catch (e) {}
+  gateInit();
 })();
 </script>
 </body>
