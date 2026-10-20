@@ -146,7 +146,7 @@ html.intro-skip .intro { display: none; }
 @keyframes cuePulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .18); } 50% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); } }
 @keyframes introIn { to { opacity: 1; transform: none; } }
 /* 인트로가 떠 있는 동안 메인 화면 등장 애니메이션은 대기 */
-html.intro-open .hero-inner, html.intro-open .hero h1 .word-in, html.intro-open .scroll-cue, html.intro-open .nav, html.intro-open .quick { animation-play-state: paused; }
+html.intro-open .hero-inner, html.intro-open .hero h1 .word-in, html.intro-open .hero h1 .ch, html.intro-open .hero .eyebrow, html.intro-open .hero .tag span, html.intro-open .scroll-cue, html.intro-open .nav, html.intro-open .quick { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
   .intro-video, .intro-cue, .intro-logo { opacity: 1; transform: none; animation: none; }
   .intro-stage { transition: opacity .3s ease; }
@@ -183,6 +183,16 @@ html.intro-open .hero-inner, html.intro-open .hero h1 .word-in, html.intro-open 
   font-family: var(--display); font-size: clamp(14px, 1.6vw, 18px); letter-spacing: .32em; color: var(--red-soft);
   margin-bottom: -10px;
 }
+/* 타이포 효과: 자간이 넓게 벌어졌다가 모이며 나타남 */
+.hero .eyebrow.track-in { opacity: 0; letter-spacing: .9em; animation: trackIn 1.3s cubic-bezier(.16, 1, .3, 1) .05s forwards; }
+@keyframes trackIn { to { opacity: 1; letter-spacing: .32em; } }
+/* JUNGLE: 글자가 한 자씩 흐림에서 또렷하게 올라옴 */
+.hero h1 .letters { display: inline-block; }
+.hero h1 .ch { display: inline-block; opacity: 0; transform: translateY(110%) scale(.94); filter: blur(10px); animation: letterIn 1s cubic-bezier(.16, 1, .3, 1) forwards; animation-delay: calc(.12s + var(--i, 0) * 70ms); }
+@keyframes letterIn { to { opacity: 1; transform: none; filter: blur(0); } }
+/* 태그라인: 가운데서 양쪽으로 열림 */
+.hero .tag.tag-in span { display: inline-block; opacity: 0; clip-path: inset(0 50% 0 50%); animation: openIn .9s cubic-bezier(.16, 1, .3, 1) 1.15s forwards; }
+@keyframes openIn { to { opacity: 1; clip-path: inset(0 0 0 0); } }
 .hero h1 {
   font-family: var(--display); font-weight: 400; letter-spacing: .01em; line-height: .86;
   font-size: clamp(72px, 13vw, 150px); text-transform: uppercase;
@@ -194,7 +204,7 @@ html.intro-open .hero-inner, html.intro-open .hero h1 .word-in, html.intro-open 
   animation: riseIn 1.1s cubic-bezier(.16, 1, .3, 1) forwards;
 }
 .hero h1 .line:nth-child(1) .word-in { animation-delay: .15s; }
-.hero h1 .line:nth-child(2) .word-in { animation-delay: .3s; }
+.hero h1 .line:nth-child(2) .word-in { animation-delay: .62s; }
 .hero h1 .line-gym .word-in {
   color: transparent; -webkit-text-stroke: .018em var(--red-soft);
   background: linear-gradient(110deg, var(--red) 0%, var(--red) 42%, #ff9ba1 50%, var(--red) 58%, var(--red) 100%);
@@ -222,8 +232,28 @@ html.intro-open .hero-inner, html.intro-open .hero h1 .word-in, html.intro-open 
 @media (prefers-reduced-motion: reduce) {
   .hero-inner, .scroll-cue, .nav { opacity: 1; animation: none; }
   .hero-inner { transform: none; }
-  .hero h1 .word-in { opacity: 1; transform: none; animation: none; }
+  .hero h1 .word-in, .hero h1 .ch, .hero .eyebrow.track-in, .hero .tag.tag-in span { opacity: 1; transform: none; filter: none; clip-path: none; letter-spacing: inherit; animation: none; }
+  .tm-track { animation: none; }
+  .split .ch { transform: none; }
 }
+
+/* ---------- Typography marquee (outlined) ---------- */
+.type-marquee { position: relative; z-index: 1; overflow: hidden; padding: 22px 0; border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); background: var(--bg); -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
+.tm-track { display: flex; width: max-content; animation: tm 36s linear infinite; }
+.type-marquee:hover .tm-track { animation-play-state: paused; }
+.tm-set { display: flex; align-items: center; font-family: var(--display); font-size: clamp(44px, 6.5vw, 92px); line-height: 1; letter-spacing: .04em; white-space: nowrap; color: transparent; -webkit-text-stroke: 1px rgba(245, 243, 240, .38); padding-right: .4em; }
+.tm-set span { padding: 0 .4em; }
+.tm-set b { color: var(--red); -webkit-text-stroke: 0; font-weight: 400; }
+@keyframes tm { to { transform: translateX(-50%); } }
+
+/* ---------- Split-text reveal (섹션 제목) ---------- */
+h2.split, h3.split { display: block; gap: 0; }
+.split .w { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .08em; margin-bottom: -.08em; }
+.split .ch { display: inline-block; transform: translateY(115%); transition: transform .9s cubic-bezier(.16, 1, .3, 1); transition-delay: calc(var(--i, 0) * 28ms); }
+.split.in .ch, .in .split .ch { transform: none; }
+.h2.split.rv { opacity: 1; transform: none; transition: none; }
+.feat .n { transition: letter-spacing .9s cubic-bezier(.16, 1, .3, 1), opacity .6s ease; }
+.feat:not(.in) .n { letter-spacing: .6em; opacity: .4; }
 
 /* ---------- Sections ---------- */
 section { padding: clamp(80px, 10vw, 140px) 0; }

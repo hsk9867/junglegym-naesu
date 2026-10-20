@@ -54,6 +54,19 @@
     intro.focus({ preventScroll: true });
   }
 
+  // 타이포 효과: 섹션 제목을 단어·글자로 나눠 아래에서 올라오게 (reveal 과 함께 동작)
+  document.querySelectorAll('.h2, .feat h3, .track h3, .track .desc + .btn').forEach(function (el) {
+    if (!el.matches('.h2, h3') || el.children.length || el.classList.contains('split')) return;
+    var text = el.textContent, n = 0, html = '';
+    text.split(' ').forEach(function (word, wi) {
+      if (wi) html += ' ';
+      html += '<span class="w">' + Array.prototype.map.call(word, function (ch) { return '<span class="ch" style="--i:' + (n++) + '">' + ch.replace(/[&<>]/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]; }) + '</span>'; }).join('') + '</span>';
+    });
+    el.setAttribute('aria-label', text);
+    el.innerHTML = html;
+    el.classList.add('split');
+  });
+
   var els = document.querySelectorAll('.rv');
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches || location.search.indexOf('static') > -1) {
     els.forEach(function (el) { el.classList.add('in'); });
