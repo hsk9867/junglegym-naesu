@@ -55,7 +55,7 @@
   }
 
   // 타이포 효과: 섹션 제목을 단어·글자로 나눠 아래에서 올라오게 (reveal 과 함께 동작)
-  document.querySelectorAll('.h2, .feat h3, .track h3, .track .desc + .btn').forEach(function (el) {
+  document.querySelectorAll('.h2, .track h3, .track .desc + .btn').forEach(function (el) {
     if (!el.matches('.h2, h3') || el.children.length || el.classList.contains('split')) return;
     var text = el.textContent, n = 0, html = '';
     text.split(' ').forEach(function (word, wi) {

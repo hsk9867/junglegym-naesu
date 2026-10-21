@@ -236,8 +236,8 @@
   var API = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/';
   var SITE = /^https?:/.test(location.protocol) ? new URL('.', location.href).href : 'https://xn--bj0bp80c9gb.com/';
   var PAGES = [
-    { key: 'features', name: '메인 운영 원칙', file: 'data/features.json', list: 'items', link: 'index.html#features', dynamic: true, noImage: true, fields: ['title', 'text'],
-      hint: '메인 사자 로고 아래 01, 02… 번호가 붙는 글 목록입니다. 제목과 설명을 바꾸고 항목을 추가·삭제·순서 변경할 수 있습니다. 번호는 순서대로 자동으로 붙습니다.',
+    { key: 'features', name: '메인 운영 원칙', file: 'data/features.json', list: 'items', link: 'index.html#features', dynamic: true, noImage: true, fields: ['title', 'en', 'short', 'text'],
+      hint: '메인 사자 로고 아래 원형 다이어그램과 카드로 보이는 운영 원칙입니다. 제목·영문 부제·원 안에 들어갈 짧은 이름·설명을 바꾸고 항목을 추가·삭제·순서 변경할 수 있습니다. 번호는 순서대로 자동으로 붙습니다.',
       slots: [] },
     { key: 'pt', name: 'PT 프로그램', file: 'data/pt.json', list: 'steps', link: 'pt.html',
       hint: '1:1 PT 프로그램 페이지(pt.html)의 대표 사진과 단계별 사진입니다. 비워 두면 PHOTO COMING SOON 으로 표시됩니다.',
@@ -260,7 +260,7 @@
         { id: 'g5', title: '갤러리 5', hint: '', fields: ['label', 'title', 'alt'] }
       ] }
   ];
-  var FIELD_LABEL = { label: '영문 라벨 (예: MACHINE ZONE)', title: '제목', text: '설명 (한두 줄)', alt: '사진 설명 (화면 낭독용, 선택)' };
+  var FIELD_LABEL = { label: '영문 라벨 (예: MACHINE ZONE)', title: '제목', en: '영문 부제 (예: Customer First)', short: '원 안 짧은 이름 (6자 이내)', text: '설명 (한두 줄)', alt: '사진 설명 (화면 낭독용, 선택)' };
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var tokenEl = $('#token'), authStatus = $('#authStatus'), logEl = $('#log'), slotsEl = $('#slots'), tabsEl = $('#tabs');
   var token = '', page = PAGES[0], data = null, dataSha = null;
@@ -536,7 +536,7 @@
       var addBox = document.createElement('div'); addBox.className = 'card row';
       addBox.innerHTML = '<button class="btn" type="button">+ 항목 추가</button><span class="dim">현재 ' + defs.length + '개. 추가 후 제목·설명을 쓰고 "문구 저장"' + (page.noImage ? '' : ', 사진은 "사진 업로드"') + '.</span>';
       addBox.querySelector('button').addEventListener('click', function () {
-        data[page.list].push(page.noImage ? { id: 'c' + Date.now().toString(36), title: '', text: '' } : { id: 'c' + Date.now().toString(36), src: '', title: '', text: '', alt: '' });
+        data[page.list].push(page.noImage ? { id: 'c' + Date.now().toString(36), title: '', en: '', short: '', text: '' } : { id: 'c' + Date.now().toString(36), src: '', title: '', text: '', alt: '' });
         saveData(page.name + ' · 카드 추가').then(renderSlots).catch(function (e) { log('add error: ' + e.message); });
       });
       slotsEl.appendChild(addBox);
@@ -692,7 +692,7 @@
         }).join('') + '</tr>';
       }).join('') + '</tbody></table>';
   }
-  var EVENT_NAMES = { tel: '전화 걸기', naver_talk: '네이버 톡톡 상담', kakao: '카카오톡', instagram: '인스타그램 이동', naver_map: '네이버 지도·플레이스', naver_review: '네이버 리뷰 보기', pt_page: 'PT 둘러보기 클릭', center_page: '센터 둘러보기 클릭', price_page: '이용권 안내 클릭' };
+  var EVENT_NAMES = { tel: '전화 걸기', naver_talk: '네이버 톡톡 상담', kakao: '카카오톡 문의', naver_map: '네이버 지도·플레이스', naver_review: '네이버 리뷰 보기', pt_page: 'PT 둘러보기 클릭', center_page: '센터 둘러보기 클릭', price_page: '이용권 안내 클릭' };
   var PAGE_NAMES = { '/': '메인', '/pt': 'PT 안내', '/center': '센터 둘러보기', '/price': '이용권 안내', '/hours': '운영시간', '/faq': '자주 묻는 질문' };
   var pageName = function (p) { return PAGE_NAMES[p] ? PAGE_NAMES[p] + ' (' + p + ')' : p; };
   function renderDash(d) {

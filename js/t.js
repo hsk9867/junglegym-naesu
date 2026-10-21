@@ -31,8 +31,7 @@
     var href = a.getAttribute('href') || '', name = '';
     if (href.indexOf('tel:') === 0) name = 'tel';
     else if (href.indexOf('talk.naver.com') >= 0) name = 'naver_talk';
-    else if (href.indexOf('pf.kakao.com') >= 0) name = 'kakao';
-    else if (href.indexOf('instagram.com') >= 0) name = 'instagram';
+    else if (href.indexOf('kakao.com') >= 0) name = 'kakao';
     else if (href.indexOf('placePath=/review') >= 0) name = 'naver_review';
     else if (href.indexOf('map.naver.com') >= 0 || href.indexOf('place.naver.com') >= 0 || href.indexOf('naver.me') >= 0) name = 'naver_map';
     else if (/(^|\/)pt\.html/.test(href)) name = 'pt_page';
